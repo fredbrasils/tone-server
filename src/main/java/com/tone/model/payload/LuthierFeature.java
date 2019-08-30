@@ -1,7 +1,6 @@
 package com.tone.model.payload;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,36 +12,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Luthier implements Serializable{
+public class LuthierFeature implements Serializable{ 
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-
-	private Long id;
 	
 	@NotBlank
-	private String name;
+    private Luthier luthier;
 	
 	@NotBlank
-	private String description;
+    private Feature feature;
 	
 	@NotBlank
-	private String email;
-	
-	private String phone;
-	
-	private String address;
-
-	private Set<SocialNetwork> socialNetworks;
-	
-	private Set<Instrument> instruments;
-	
-	private Set<LuthierFeature> features;
-	
+	private String value;
 }

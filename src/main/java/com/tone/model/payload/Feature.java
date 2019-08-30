@@ -5,44 +5,32 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
+import com.tone.model.enumm.FeatureTypeEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+@EqualsAndHashCode
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Luthier implements Serializable{
+public class Feature implements Serializable{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
-	
 	@NotBlank
 	private String name;
-	
-	@NotBlank
-	private String description;
-	
-	@NotBlank
-	private String email;
-	
-	private String phone;
-	
-	private String address;
 
-	private Set<SocialNetwork> socialNetworks;
-	
-	private Set<Instrument> instruments;
+	@NotBlank
+	private FeatureTypeEnum type;	
 	
 	private Set<LuthierFeature> features;
-	
 }

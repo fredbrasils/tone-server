@@ -22,6 +22,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.tone.model.enumm.OperationEnum;
+import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,9 +41,9 @@ import lombok.Setter;
 @MappedSuperclass
 public class BaseEntity implements Serializable {
 
+	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	
+		
 	public BaseEntity(Long id) {
 		super();
 		this.id = id;
