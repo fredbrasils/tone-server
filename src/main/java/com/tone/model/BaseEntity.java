@@ -54,16 +54,20 @@ public class BaseEntity implements Serializable {
 	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
+	@IgnoreField
 	@Enumerated
     private OperationEnum operation;
       
+	@IgnoreField
     @Column
     private LocalDateTime createdTime;
     
+	@IgnoreField
 	@Column
     @CreatedBy
     private String createdBy;
  
+	@IgnoreField
     @Column
     @LastModifiedBy
     private String modifiedBy;

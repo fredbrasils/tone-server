@@ -3,6 +3,7 @@ package com.tone.model;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.tone.utils.IgnoreField;
 
@@ -13,6 +14,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 
+ * @author fredbrasil
+ *
+ */
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
@@ -32,6 +38,7 @@ public class InstrumentEntity extends BaseEntity{
 		this.name = name;
 	}
 
+	@NotBlank
 	private String name;
 	
 	@ManyToMany(mappedBy = "instruments")
