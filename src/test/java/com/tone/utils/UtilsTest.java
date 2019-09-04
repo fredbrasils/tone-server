@@ -17,6 +17,7 @@ import com.tone.model.payload.Luthier;
 
 class UtilsTest {
 
+	
     @DisplayName(value="Convert luthier to entity without validate entities object.") 
     @Test
     void convertLuthierToEntityWithoutEntityObjects() throws Exception {
@@ -28,6 +29,7 @@ class UtilsTest {
     	assertEquals(l.getId(), entity.getId());
     	assertEquals(l.getName(), entity.getName());
     }
+    
  
     @DisplayName(value="Convert luthier to entity") 
     @Test
@@ -41,7 +43,7 @@ class UtilsTest {
     	instruments.add(in2);
     	
     	Luthier l = Luthier.builder().id(1l).name("Luthier 1").instruments(instruments).build();
-    	//in1.setLuthier(l);
+    	in1.setLuthier(l);
     	
     	LuthierEntity entity = (LuthierEntity) Utils.convertFromTo(l, LuthierEntity.class);  	
     	
@@ -49,11 +51,11 @@ class UtilsTest {
     	assertEquals(l.getName(), entity.getName());
     	assertEquals(entity.getInstruments().size(), 2);
     	
-    	/*
+    	
     	Predicate<InstrumentEntity> predicate = i -> i.getLuthier() != null;
     	
     	assertNotNull(entity.getInstruments().stream().findFirst().filter(predicate).get());
-    	*/
+    	
     }
     
     
@@ -76,6 +78,7 @@ class UtilsTest {
     	});
     	
     }
+    
 
 	/*
 	@DisplayName(value="Convert list of luthiers to entity.") 
