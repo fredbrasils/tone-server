@@ -5,12 +5,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.tone.model.InstrumentEntity;
 import com.tone.model.LuthierEntity;
 import com.tone.model.payload.Instrument;
 import com.tone.model.payload.Luthier;
@@ -43,18 +41,20 @@ class UtilsTest {
     	instruments.add(in2);
     	
     	Luthier l = Luthier.builder().id(1l).name("Luthier 1").instruments(instruments).build();
-    	in1.setLuthier(l);
+    	Set<Luthier> luthiers = new HashSet<Luthier>();
+    	luthiers.add(l);
+    	in1.setLuthiers(luthiers);
+    	in2.setLuthiers(luthiers);    	
     	
     	LuthierEntity entity = (LuthierEntity) Utils.convertFromTo(l, LuthierEntity.class);  	
     	
     	assertEquals(l.getId(), entity.getId());
     	assertEquals(l.getName(), entity.getName());
-    	assertEquals(entity.getInstruments().size(), 2);
+    	assertEquals(entity.getInstruments().size(), 2);    	
     	
-    	
-    	Predicate<InstrumentEntity> predicate = i -> i.getLuthier() != null;
-    	
-    	assertNotNull(entity.getInstruments().stream().findFirst().filter(predicate).get());
+    	entity.getInstruments().stream().forEach( ins -> {
+    			assertNotNull(ins.getLuthiers().stream().findFirst().get());
+    	});    	
     	
     }
     

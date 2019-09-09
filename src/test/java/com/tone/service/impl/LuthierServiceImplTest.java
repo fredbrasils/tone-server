@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.tone.exception.BusinessException;
 import com.tone.model.LuthierEntity;
 import com.tone.service.LuthierService;
 
@@ -29,8 +30,11 @@ class LuthierServiceImplTest {
 	void setUp() {
 		LuthierEntity luthier1 = LuthierEntity.builder().name("Luthier 1").build();
 		LuthierEntity luthier2 = LuthierEntity.builder().name("Luthier 2").build();
-		luthierService.save(luthier1);
-		luthierService.save(luthier2);
+		try {
+			luthierService.save(luthier1);
+			luthierService.save(luthier2);
+		} catch (BusinessException e) {
+		}
 	}
 	
 	@AfterEach
@@ -38,7 +42,10 @@ class LuthierServiceImplTest {
 		
 		Set<LuthierEntity> luthiers = luthierService.findAll();
 		luthiers.stream().forEach(lut -> {
-			luthierService.delete(lut);
+			try {
+				luthierService.delete(lut);
+			} catch (BusinessException e) {
+			}
 		});
 	}
 	
@@ -65,7 +72,10 @@ class LuthierServiceImplTest {
 	void save() {
 		
 		LuthierEntity luthier3 = LuthierEntity.builder().name("Luthier 3").build();
-		luthierService.save(luthier3);
+		try {
+			luthierService.save(luthier3);
+		} catch (BusinessException e) {
+		}
 		LuthierEntity luthier = luthierService.findOptionalByName("Luthier 3");
 		assertNotNull(luthier);		
 	}
@@ -76,7 +86,10 @@ class LuthierServiceImplTest {
 		
 		LuthierEntity luthier = luthierService.findOptionalByName("Luthier 1");
 		luthier.setName("new luthier");
-		luthierService.save(luthier);
+		try {
+			luthierService.save(luthier);
+		} catch (BusinessException e) {
+		}
 		
 		assertNotNull(luthierService.findOptionalByName("new luthier"));		
 	}

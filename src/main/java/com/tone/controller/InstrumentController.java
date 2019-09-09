@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tone.exception.BusinessException;
-import com.tone.model.LuthierEntity;
+import com.tone.model.InstrumentEntity;
 import com.tone.model.payload.GenericResponse;
-import com.tone.model.payload.Luthier;
-import com.tone.service.LuthierService;
+import com.tone.model.payload.Instrument;
+import com.tone.service.InstrumentService;
 import com.tone.utils.ConstantsMessages;
 import com.tone.utils.Utils;
 
@@ -31,40 +31,40 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/luthier")
-public class LuthierController extends BaseController{
+@RequestMapping("/api/instrument")
+public class InstrumentController extends BaseController{
 
-	private final LuthierService luthierService;
+	private final InstrumentService instrumentService;
 
-    public LuthierController(LuthierService luthierService) {
+    public InstrumentController(InstrumentService instrumentService) {
     	super();
-        this.luthierService = luthierService;
+        this.instrumentService = instrumentService;
     }
     
     @GetMapping
-	public ResponseEntity<?> findLuthiers(HttpServletRequest request) {
+	public ResponseEntity<?> findInstruments(HttpServletRequest request) {
 	  
-    	log.debug("luthierController:findLuthiers");
+    	log.debug("instrumentController:findInstruments");
     		     
-	    List<LuthierEntity> list = new ArrayList<LuthierEntity>(luthierService.findAll());
+	    List<InstrumentEntity> list = new ArrayList<InstrumentEntity>(instrumentService.findAll());
 	    
-	    List listLuthiers = Utils.convertFromTo(list, Luthier.class);
+	    List listInstruments = Utils.convertFromTo(list, Instrument.class);
 	    
-        return ResponseEntity.ok(listLuthiers);
+        return ResponseEntity.ok(listInstruments);
     
     }
     
     @PostMapping
-    public ResponseEntity<GenericResponse> createluthier(@Valid @RequestBody Luthier luthier, BindingResult result,
+    public ResponseEntity<GenericResponse> createinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
-    	Luthier luthierSaved = null;
+    	Instrument instrumentSaved = null;
     	
     	if (!result.hasErrors()) {
     	
     		try {
-    			LuthierEntity luthierEntity = (LuthierEntity) Utils.convertFromTo(luthier, LuthierEntity.class);
-    			luthierSaved = (Luthier) Utils.convertFromTo(luthierService.save(luthierEntity), Luthier.class);
+    			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);
+    			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.save(instrumentEntity), Instrument.class);
 
     		} catch (Exception e) {
 				return messageError(request, new String[] {e.getMessage()}, null);
@@ -73,21 +73,21 @@ public class LuthierController extends BaseController{
 			return messageError(request, validateErrors(result), null);
 		}
 
-    	return ResponseEntity.ok(messageSuccess(luthierSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
+    	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
     @PutMapping
-    public ResponseEntity<GenericResponse> updateluthier(@Valid @RequestBody Luthier luthier, BindingResult result,
+    public ResponseEntity<GenericResponse> updateinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
-    	Luthier luthierSaved = null;
+    	Instrument instrumentSaved = null;
     	
-    	if (!result.hasErrors() && luthier.getId() != null) {
+    	if (!result.hasErrors() && instrument.getId() != null) {
     	
     		try {
     			
-    			LuthierEntity luthierEntity = (LuthierEntity) Utils.convertFromTo(luthier, LuthierEntity.class);    			
-    			luthierSaved = (Luthier) Utils.convertFromTo(luthierService.save(luthierEntity), Luthier.class);
+    			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
+    			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.save(instrumentEntity), Instrument.class);
 
 			} catch (Exception e) {
 				return messageError(request, new String[] {e.getMessage()}, null);
@@ -101,17 +101,17 @@ public class LuthierController extends BaseController{
     		}
 		} 
 
-    	return ResponseEntity.ok(messageSuccess(luthierSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
+    	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
     @DeleteMapping
-    public ResponseEntity<GenericResponse> deleteluthier(@Valid @RequestBody Luthier luthier, BindingResult result,
+    public ResponseEntity<GenericResponse> deleteinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
     	if (!result.hasErrors()) {
-    		LuthierEntity luthierEntity = (LuthierEntity) Utils.convertFromTo(luthier, LuthierEntity.class);    			
+    		InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
 			try {
-				luthierService.delete(luthierEntity);
+				instrumentService.delete(instrumentEntity);
 			} catch (BusinessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

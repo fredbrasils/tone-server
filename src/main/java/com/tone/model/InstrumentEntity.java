@@ -1,5 +1,7 @@
 package com.tone.model;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -41,6 +43,6 @@ public class InstrumentEntity extends BaseEntity{
 	@NotBlank
 	private String name;
 	
-	@ManyToMany(mappedBy = "instruments")
-	private LuthierEntity luthier;
+	@ManyToMany(mappedBy = "instruments")	
+	private Set<LuthierEntity> luthiers;
 }

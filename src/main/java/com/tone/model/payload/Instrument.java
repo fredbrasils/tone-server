@@ -1,6 +1,7 @@
 package com.tone.model.payload;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
@@ -24,8 +25,10 @@ public class Instrument implements Serializable{
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
+	
 	@NotBlank
 	private String name;
 	
-	private Luthier luthier;
+	private Set<Luthier> luthiers;
 }

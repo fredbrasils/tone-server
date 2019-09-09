@@ -26,6 +26,8 @@ public class Feature implements Serializable{
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
+	
 	@NotBlank
 	private String name;
 

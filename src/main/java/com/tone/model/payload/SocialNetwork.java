@@ -25,6 +25,8 @@ public class SocialNetwork implements Serializable{
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
+	
 	@NotBlank
 	private SocialNetworkTypeEnum type;
 	
