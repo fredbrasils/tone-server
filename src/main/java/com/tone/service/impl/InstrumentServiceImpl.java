@@ -27,7 +27,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 		log.info("Save instrument");
 		InstrumentEntity instrument = this.findOptionalByName(entity.getName());
 		
-		if(instrument != null) {
+		if(instrument != null && instrument.getId() != entity.getId()) {
 			throw new BusinessException(MSG_ERROR_INSTRUMENT_EXIST);
 		}
 		

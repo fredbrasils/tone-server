@@ -35,7 +35,7 @@ class InstrumentServiceImplTest {
 		try {
 			instrumentService.save(instrument1);
 			instrumentService.save(instrument2);			
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 		}
 	}
 	
@@ -78,7 +78,7 @@ class InstrumentServiceImplTest {
 		InstrumentEntity instrument3 = InstrumentEntity.builder().name("Instrument 3").build();
 		try {
 			instrumentService.save(instrument3);			
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			fail();
 		}
 		
@@ -94,22 +94,53 @@ class InstrumentServiceImplTest {
 		try {
 			instrumentService.save(instrument2);
 			fail("Fail: Saved an instrument with an exists name");
-		}catch (Exception e) {
+		}catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
 		}
 	}
 	
-	/*
+	
 	@DisplayName("Update instrument")
 	@Test
 	void update() {		
 		
 		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
 		instrument.setName("new instrument");
-		instrumentService.save(instrument);
+		try {
+			instrumentService.save(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
 		
 		assertNotNull(instrumentService.findOptionalByName("new instrument"));		
 	}
-	*/
 	
+	@DisplayName("Cant update an instrument with an exists name")
+	@Test
+	void shouldntUpdateWithExistsName() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		instrument.setName("Instrument 2");
+		try {
+			instrumentService.save(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
+		}
+	}
+	
+	@DisplayName("Update an instrument with the same name")
+	@Test
+	void shouldUpdateWithSameName() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		instrument.setName("Instrument 1");
+		try {
+			instrumentService.save(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertNotNull(instrumentService.findOptionalByName("Instrument 1"));
+	}
 }

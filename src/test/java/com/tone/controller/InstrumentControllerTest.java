@@ -139,13 +139,12 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
 
     }
     
-    /*
     @DisplayName(value="Update instrument")
     @Test
     void updateInstrument() throws Exception {
     	
-    	Instrument instrument = Instrument.builder().id(1l).name("home").build();
-    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("home").build();
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").build();
+    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").build();
     	
     	when(instrumentService.save(ArgumentMatchers.any(InstrumentEntity.class))).thenReturn(instrumentEntity);
 
@@ -196,6 +195,26 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
 
     }
     
+    @DisplayName(value="Dont update instrument with exist name")
+    @Test
+    void dontRegisterAnExistsInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().name("guitar").id(1l).build();
+    	
+    	when(instrumentService.save(ArgumentMatchers.any(InstrumentEntity.class))).thenThrow(BusinessException.class);    	
+
+        mockMvc.perform(put("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())                
+                ;
+
+        verify(instrumentService, times(1)).save(ArgumentMatchers.any());
+
+    }
+    
+    /*
     @DisplayName(value="Delete instrument")
     @Test
     void deleteInstrument() throws Exception {

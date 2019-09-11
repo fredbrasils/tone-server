@@ -1,6 +1,6 @@
 package com.tone.controller;
 
-import static com.tone.utils.ConstantsMessages.NOTBLANK_LUTHIER_ID;
+import static com.tone.utils.ConstantsMessages.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +97,7 @@ public class InstrumentController extends BaseController{
     		if(result.hasErrors()) {
     			return messageError(request, validateErrors(result), null);
     		}else {
-    			return messageError(request, new String[] {NOTBLANK_LUTHIER_ID}, null);
+    			return messageError(request, new String[] {NOTBLANK_INSTRUMENT_ID}, null);
     		}
 		} 
 
