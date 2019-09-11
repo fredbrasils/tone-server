@@ -1,6 +1,7 @@
 package com.tone.service.impl;
 
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +52,6 @@ class InstrumentServiceImplTest {
 		});
 	}
 	
-	/*
 	@DisplayName("Find all instrument")
 	@Test
 	void findAll() {
@@ -69,7 +69,14 @@ class InstrumentServiceImplTest {
 		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
 		assertNotNull(instrument);		
 	}
-	*/
+	
+	@DisplayName("Not Found instrument by name")
+	@Test
+	void notfoundInstrumentByName() {
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("guitar");
+		assertNull(instrument);		
+	}
 	
 	@DisplayName("Save instrument")
 	@Test
@@ -98,7 +105,6 @@ class InstrumentServiceImplTest {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
 		}
 	}
-	
 	
 	@DisplayName("Update instrument")
 	@Test

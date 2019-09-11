@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.sun.xml.bind.v2.schemagen.xmlschema.Any;
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
 import com.tone.model.payload.Instrument;
@@ -63,8 +64,6 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .build();
     }    
     
-    /*
-
     @DisplayName(value="Find all instruments.") 
     @Test
     void findAllInstruments() throws Exception {
@@ -75,11 +74,40 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
                 ;        
     }
-    */
+    
+    @DisplayName(value="Find instrument by name.") 
+    @Test
+    void findInstrumentByName() throws Exception {
+		
+    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").build();
+    	
+    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(instrumentEntity);    	
+    	
+        mockMvc.perform(get("/api/instrument/guitar")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(instrumentEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(instrumentEntity.getId().intValue())))
+                ;        
+    }
+    
+    @DisplayName(value="Not Found an instrument by name.") 
+    @Test
+    void notFoundInstrumentByName() throws Exception {
+		
+    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(null);    	
+    	
+        mockMvc.perform(get("/api/instrument/batuque")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadRequest())                
+                ;
+    }
     
     @DisplayName(value="Create a new instrument")
     @Test
