@@ -55,7 +55,7 @@ public class InstrumentController extends BaseController{
     }
     
     @PostMapping
-    public ResponseEntity<GenericResponse> createinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
+    public ResponseEntity<GenericResponse> createInstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
     	Instrument instrumentSaved = null;
@@ -66,7 +66,7 @@ public class InstrumentController extends BaseController{
     			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);
     			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.save(instrumentEntity), Instrument.class);
 
-    		} catch (Exception e) {
+    		} catch (BusinessException e) {
 				return messageError(request, new String[] {e.getMessage()}, null);
 			}
     	}else {
@@ -89,7 +89,7 @@ public class InstrumentController extends BaseController{
     			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
     			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.save(instrumentEntity), Instrument.class);
 
-			} catch (Exception e) {
+			} catch (BusinessException e) {
 				return messageError(request, new String[] {e.getMessage()}, null);
 			}
     	}else {
@@ -113,8 +113,7 @@ public class InstrumentController extends BaseController{
 			try {
 				instrumentService.delete(instrumentEntity);
 			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return messageError(request, new String[] {e.getMessage()}, null);
 			}
     	}else {
 			return messageError(request, validateErrors(result), null);
