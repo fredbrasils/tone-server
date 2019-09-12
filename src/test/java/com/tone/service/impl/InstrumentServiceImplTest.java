@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.service.InstrumentService;
 import com.tone.utils.ConstantsMessages;
 
@@ -31,8 +32,8 @@ class InstrumentServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").build();
-		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").build();
+		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").status(StatusEnum.ACTIVE).build();
+		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").status(StatusEnum.INACTIVE).build();
 		try {
 			instrumentService.save(instrument1);
 			instrumentService.save(instrument2);			
@@ -57,7 +58,7 @@ class InstrumentServiceImplTest {
 	void findAll() {
 		
 		Set<InstrumentEntity> instruments = instrumentService.findAll();
-
+		
 		assertNotNull(instruments);
 		assertEquals(2, instruments.size());
 	}
@@ -76,6 +77,22 @@ class InstrumentServiceImplTest {
 		
 		InstrumentEntity instrument = instrumentService.findOptionalByName("guitar");
 		assertNull(instrument);		
+	}
+	
+	@DisplayName("Find instrument active")
+	@Test
+	void findAllInstrumentActive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findActive();
+		assertEquals(1,instrument.size());		
+	}
+	
+	@DisplayName("Find instrument inactive")
+	@Test
+	void findAllInstrumentInactive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findInactive();
+		assertEquals(1,instrument.size());		
 	}
 	
 	@DisplayName("Save instrument")

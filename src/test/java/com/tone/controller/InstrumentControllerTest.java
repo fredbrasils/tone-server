@@ -63,6 +63,21 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .standaloneSetup(instrumentController)
                 .build();
     }    
+    /*
+    @DisplayName(value="Find all instruments active.") 
+    @Test
+    void findAllInstrumentsActive() throws Exception {
+		
+    	when(instrumentService.findAll()).thenReturn(new HashSet<>(instruments));    	
+    	
+        mockMvc.perform(get("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
+                ;        
+    }*/
     
     @DisplayName(value="Find all instruments.") 
     @Test

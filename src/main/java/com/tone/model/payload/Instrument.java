@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
+import com.tone.model.enumm.StatusEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +30,8 @@ public class Instrument implements Serializable{
 	
 	@NotBlank
 	private String name;
+	
+	private StatusEnum status;
 	
 	private Set<Luthier> luthiers;
 }
