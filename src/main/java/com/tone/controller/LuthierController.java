@@ -2,8 +2,8 @@ package com.tone.controller;
 
 import static com.tone.utils.ConstantsMessages.NOTBLANK_LUTHIER_ID;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -46,9 +46,9 @@ public class LuthierController extends BaseController{
 	  
     	log.debug("luthierController:findLuthiers");
     		     
-	    List<LuthierEntity> list = luthierService.findAll().orElse(null).stream().collect(Collectors.toList());
+	    List<LuthierEntity> list = new ArrayList<LuthierEntity>(luthierService.findAll());
 	    
-	    List<Luthier> listLuthiers = Utils.convertFromTo(list, Luthier.class);
+	    List listLuthiers = Utils.convertFromTo(list, Luthier.class);
 	    
         return ResponseEntity.ok(listLuthiers);
     

@@ -16,9 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +34,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.sun.xml.bind.v2.schemagen.xmlschema.Any;
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
-import com.tone.model.LuthierEntity;
 import com.tone.model.payload.Instrument;
 import com.tone.service.InstrumentService;
 
@@ -67,44 +63,27 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .standaloneSetup(instrumentController)
                 .build();
     }    
-    
+    /*
     @DisplayName(value="Find all instruments active.") 
     @Test
     void findAllInstrumentsActive() throws Exception {
 		
-    	when(instrumentService.findActive()).thenReturn(new HashSet<>(instruments));    	
+    	when(instrumentService.findAll()).thenReturn(new HashSet<>(instruments));    	
     	
-        mockMvc.perform(get("/api/instrument/active")
+        mockMvc.perform(get("/api/instrument")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.object").isArray())
                 .andExpect(jsonPath("$.object", hasSize(2)))
                 ;        
-    }
-    
-    @DisplayName(value="Find all instruments inactive.") 
-    @Test
-    void findAllInstrumentsInactive() throws Exception {
-		
-    	when(instrumentService.findInactive()).thenReturn(new HashSet<>(instruments));    	
-    	
-        mockMvc.perform(get("/api/instrument/inactive")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.object").isArray())
-                .andExpect(jsonPath("$.object", hasSize(2)))
-                ;        
-    }
+    }*/
     
     @DisplayName(value="Find all instruments.") 
     @Test
     void findAllInstruments() throws Exception {
 		
-    	Optional<Set<InstrumentEntity>> list = Optional.of(instruments.stream().collect(Collectors.toSet()));
-    	
-    	when(instrumentService.findAll()).thenReturn(list);    	
+    	when(instrumentService.findAll()).thenReturn(new HashSet<>(instruments));    	
     	
         mockMvc.perform(get("/api/instrument")
         		.accept(MediaType.APPLICATION_JSON)
@@ -112,21 +91,6 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.object").isArray())
                 .andExpect(jsonPath("$.object", hasSize(2)))
-                ;        
-    }
-    
-    @DisplayName(value="Not found instruments.") 
-    @Test
-    void notFoundInstruments() throws Exception {
-		
-    	Set<InstrumentEntity> list = new HashSet<>();
-    	when(instrumentService.findAll()).thenReturn(Optional.ofNullable(list));    	
-    	
-        mockMvc.perform(get("/api/instrument")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.object").doesNotExist())
                 ;        
     }
     

@@ -2,11 +2,8 @@ package com.tone.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -70,10 +67,10 @@ class UtilsTest {
     	Luthier l2 = Luthier.builder().id(2l).name("Luthier 2").build();
     	Luthier l3 = Luthier.builder().id(3l).name("Luthier 3").build();
     	
-    	Set<Luthier> list = new HashSet<>();
+    	Set list = new HashSet<>();
     	list.add(l1);list.add(l2);list.add(l3);
     	
-    	Set<LuthierEntity> lEntities = Utils.convertFromTo(list, LuthierEntity.class);
+    	Set lEntities = Utils.convertFromTo(list, LuthierEntity.class);
     	
     	lEntities.stream().forEach(lut -> {
     		assertNotNull( ((LuthierEntity)lut).getId());
@@ -82,38 +79,17 @@ class UtilsTest {
     	
     }
     
-    @DisplayName(value="Return null if Set is null.") 
-    @Test
-    void shouldReturnNullIfSetIsNull() throws Exception {
-    	Set<?> list = null;
-   		assertNull(Utils.convertFromTo(list, LuthierEntity.class));
-    }    
-    
-    @DisplayName(value="Return null if Set is empty.") 
-    @Test
-    void shouldReturnNullIfSetIsEmpty() throws Exception {
-    	Set<?> list = new HashSet<>();
-   		assertNull(Utils.convertFromTo(list, LuthierEntity.class));
-    }
 
-    @DisplayName(value="Return null if List is null.") 
+	/*
+	@DisplayName(value="Convert list of luthiers to entity.") 
     @Test
-    void shouldReturnNullIfListIsNull() throws Exception {
-    	List<?> list = null;
-   		assertNull(Utils.convertFromTo(list, LuthierEntity.class));
-    }    
-    
-    @DisplayName(value="Return null if List is empty.") 
-    @Test
-    void shouldReturnNullIfListIsEmpty() throws Exception {
-    	List<?> list = new ArrayList<>();
-   		assertNull(Utils.convertFromTo(list, LuthierEntity.class));
+    void convertListOfLuthiersToEntity() throws Exception {
+		
+    	Utils.test();
+    	
+    	assertTrue(true);
+    	
     }
+	*/
 	
-    @DisplayName(value="Return null if Object is empty.") 
-    @Test
-    void shouldReturnNullIfObjectIsEmpty() throws Exception {
-    	Object obj = null;
-   		assertNull(Utils.convertFromTo(obj, LuthierEntity.class));
-    }
 }

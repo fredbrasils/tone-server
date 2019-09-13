@@ -44,7 +44,7 @@ class InstrumentServiceImplTest {
 	@AfterEach
 	void close() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
+		Set<InstrumentEntity> instruments = instrumentService.findAll();
 		instruments.stream().forEach(lut -> {
 			try {
 				instrumentService.delete(lut);
@@ -57,7 +57,7 @@ class InstrumentServiceImplTest {
 	@Test
 	void findAll() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
+		Set<InstrumentEntity> instruments = instrumentService.findAll();
 		
 		assertNotNull(instruments);
 		assertEquals(2, instruments.size());

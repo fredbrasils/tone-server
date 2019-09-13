@@ -1,12 +1,10 @@
 package com.tone.controller;
 
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.NOTBLANK_INSTRUMENT_ID;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -50,36 +48,12 @@ public class InstrumentController extends BaseController{
 	  
     	log.debug("instrumentController:findAllInstruments");
     		     
-    	Set<InstrumentEntity> list = instrumentService.findAll().orElse(null);
+	    List<InstrumentEntity> list = new ArrayList<InstrumentEntity>(instrumentService.findAll());
 	    
-    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
+	    List listInstruments = Utils.convertFromTo(list, Instrument.class);
 	    
         return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));
     
-    }
-    
-    @GetMapping("/active")
-	public ResponseEntity<?> findInstrumentActive(HttpServletRequest request) {
-	  
-    	log.debug("instrumentController:findInstrumentActive");
-    		     
-    	Set<InstrumentEntity> list = instrumentService.findActive();
-	    
-    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
-	    
-        return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
-    }
-    
-    @GetMapping("/inactive")
-	public ResponseEntity<?> findInstrumentInactive(HttpServletRequest request) {
-	  
-    	log.debug("instrumentController:findInstrumentInactive");
-    		     
-    	Set<InstrumentEntity> list = instrumentService.findInactive();
-	    
-    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
-	    
-        return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
     
     @GetMapping("/{name}")
