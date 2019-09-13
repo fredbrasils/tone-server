@@ -1,6 +1,7 @@
 package com.tone.service.impl;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -25,9 +26,9 @@ public abstract class BaseServiceImpl<T, ID> implements BaseService<T, ID>{
 		this.crudRepository = crudRepository;
 	}	
 	
-	public T findById(ID id) {
+	public Optional<T> findById(ID id) {
 		log.debug("BaseServiceImpl::findById");
-		return crudRepository.findById(id).orElse(null);		
+		return crudRepository.findById(id);		
 	}
 
 	public T save(T entity) throws BusinessException{
@@ -35,11 +36,11 @@ public abstract class BaseServiceImpl<T, ID> implements BaseService<T, ID>{
 		return crudRepository.save(entity);
 	}
 
-	public Set<T> findAll() {
+	public Optional<Set<T>> findAll() {
 		log.debug("BaseServiceImpl::findAll");
 		Set<T> entities = new HashSet<>();
 		crudRepository.findAll().forEach(entities::add);
-		return entities;
+		return Optional.ofNullable(entities);		
 	}
 
 	public void delete(T entity) throws BusinessException{
