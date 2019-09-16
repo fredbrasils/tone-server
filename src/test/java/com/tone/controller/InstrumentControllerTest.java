@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,10 +33,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.Any;
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
-import com.tone.model.LuthierEntity;
 import com.tone.model.payload.Instrument;
 import com.tone.service.InstrumentService;
 
@@ -83,6 +80,21 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 ;        
     }
     
+    @DisplayName(value="Not found instruments active.") 
+    @Test
+    void notFoundInstrumentsActive() throws Exception {
+		
+    	Set<InstrumentEntity> list = new HashSet<>();
+    	when(instrumentService.findActive()).thenReturn(list);    	
+    	
+        mockMvc.perform(get("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+                ;        
+    }
+    
     @DisplayName(value="Find all instruments inactive.") 
     @Test
     void findAllInstrumentsInactive() throws Exception {
@@ -95,6 +107,21 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.object").isArray())
                 .andExpect(jsonPath("$.object", hasSize(2)))
+                ;        
+    }
+    
+    @DisplayName(value="Not found instruments inactive.") 
+    @Test
+    void notFoundInstrumentsInactive() throws Exception {
+		
+    	Set<InstrumentEntity> list = new HashSet<>();
+    	when(instrumentService.findInactive()).thenReturn(list);    	
+    	
+        mockMvc.perform(get("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
                 ;        
     }
     
