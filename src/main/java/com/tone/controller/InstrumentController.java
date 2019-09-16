@@ -52,7 +52,6 @@ public class InstrumentController extends BaseController{
     	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
 	    
         return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));
-    
     }
     
     @GetMapping("/active")
@@ -160,5 +159,45 @@ public class InstrumentController extends BaseController{
 		} 
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
+    }
+    
+    @PutMapping("/active")
+    public ResponseEntity<GenericResponse> active(@RequestBody Instrument instrument, HttpServletRequest request) {
+    	
+    	Instrument instrumentSaved = null;
+    	
+    	if (instrument.getId() != null) {
+    	
+    		try {    			
+    			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
+    			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.active(instrumentEntity), Instrument.class);
+			} catch (BusinessException e) {
+				return messageError(request, new String[] {e.getMessage()}, null);
+			}
+    	}else {
+   			return messageError(request, new String[] {NOTBLANK_INSTRUMENT_ID}, null);
+		} 
+
+    	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
+    }
+    
+    @PutMapping("/inactive")
+    public ResponseEntity<GenericResponse> inactive(@RequestBody Instrument instrument, HttpServletRequest request) {
+    	
+    	Instrument instrumentSaved = null;
+    	
+    	if (instrument.getId() != null) {
+    	
+    		try {    			
+    			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
+    			instrumentSaved = (Instrument) Utils.convertFromTo(instrumentService.inactive(instrumentEntity), Instrument.class);
+			} catch (BusinessException e) {
+				return messageError(request, new String[] {e.getMessage()}, null);
+			}
+    	}else {
+   			return messageError(request, new String[] {NOTBLANK_INSTRUMENT_ID}, null);
+		} 
+
+    	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
 }

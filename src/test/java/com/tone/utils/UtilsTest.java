@@ -12,7 +12,9 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.tone.model.InstrumentEntity;
 import com.tone.model.LuthierEntity;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.model.payload.Instrument;
 import com.tone.model.payload.Luthier;
 
@@ -58,9 +60,7 @@ class UtilsTest {
     	entity.getInstruments().stream().forEach( ins -> {
     			assertNotNull(ins.getLuthiers().stream().findFirst().get());
     	});    	
-    	
     }
-    
     
     @DisplayName(value="Convert list of luthiers to entity.") 
     @Test
@@ -79,7 +79,6 @@ class UtilsTest {
     		assertNotNull( ((LuthierEntity)lut).getId());
     		assertNotNull( ((LuthierEntity)lut).getName());
     	});
-    	
     }
     
     @DisplayName(value="Return null if Set is null.") 
@@ -115,5 +114,14 @@ class UtilsTest {
     void shouldReturnNullIfObjectIsEmpty() throws Exception {
     	Object obj = null;
    		assertNull(Utils.convertFromTo(obj, LuthierEntity.class));
+    }
+    
+    @DisplayName(value="Valide Enum.") 
+    @Test
+    void valideEnum() throws Exception {
+    	Instrument obj = Instrument.builder().id(1l).status(StatusEnum.ACTIVE).build();
+    	InstrumentEntity ins = (InstrumentEntity) Utils.convertFromTo(obj, InstrumentEntity.class);
+    	
+   		assertEquals(StatusEnum.ACTIVE,ins.getStatus());
     }
 }

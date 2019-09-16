@@ -12,6 +12,7 @@ public class ConstantsMessages {
 	public static final String MSG_ERROR_INSTRUMENT_EXIST = "msg.error.instrument.exist";
 	public static final String NOTBLANK_INSTRUMENT_ID = "NotBlank.instrument.id";
 	public static final String MSG_ERROR_INSTRUMENT_NOTFOUND = "msg.error.instrument.notfound";
+	public static final String MSG_ERROR_INSTRUMENT_SAVE = "msg.error.instrument.save";
 	
 	private ConstantsMessages() {
 	}
