@@ -29,7 +29,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static List convertFromTo(List list, Class clazz) {
-		return convertFromTo(list, clazz, DEEP);
+		return list != null && !list.isEmpty() ? convertFromTo(list, clazz, DEEP) : null;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Set convertFromTo(Set list, Class clazz) {
-		return convertFromTo(list, clazz, DEEP);		
+		return list != null && !list.isEmpty() ? convertFromTo(list, clazz, DEEP) : null;		
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Object convertFromTo(Object obj, Class clazz) {
-		return convertFromTo(obj, clazz, DEEP);
+		return obj != null ? convertFromTo(obj, clazz, DEEP) : null;
 	}
 	
 	/**

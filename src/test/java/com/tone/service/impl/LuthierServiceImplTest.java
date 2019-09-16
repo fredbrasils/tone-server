@@ -40,7 +40,7 @@ class LuthierServiceImplTest {
 	@AfterEach
 	void close() {
 		
-		Set<LuthierEntity> luthiers = luthierService.findAll();
+		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 		luthiers.stream().forEach(lut -> {
 			try {
 				luthierService.delete(lut);
@@ -53,7 +53,7 @@ class LuthierServiceImplTest {
 	@Test
 	void findAll() {
 		
-		Set<LuthierEntity> luthiers = luthierService.findAll();
+		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 
 		assertNotNull(luthiers);
 		assertEquals(2, luthiers.size());

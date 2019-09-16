@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,6 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,23 +65,127 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 .build();
     }    
     
-    /*
-
+    @DisplayName(value="Find all instruments active.") 
+    @Test
+    void findAllInstrumentsActive() throws Exception {
+		
+    	when(instrumentService.findActive()).thenReturn(new HashSet<>(instruments));    	
+    	
+        mockMvc.perform(get("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
+                ;        
+    }
+    
+    @DisplayName(value="Not found instruments active.") 
+    @Test
+    void notFoundInstrumentsActive() throws Exception {
+		
+    	Set<InstrumentEntity> list = new HashSet<>();
+    	when(instrumentService.findActive()).thenReturn(list);    	
+    	
+        mockMvc.perform(get("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+                ;        
+    }
+    
+    @DisplayName(value="Find all instruments inactive.") 
+    @Test
+    void findAllInstrumentsInactive() throws Exception {
+		
+    	when(instrumentService.findInactive()).thenReturn(new HashSet<>(instruments));    	
+    	
+        mockMvc.perform(get("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
+                ;        
+    }
+    
+    @DisplayName(value="Not found instruments inactive.") 
+    @Test
+    void notFoundInstrumentsInactive() throws Exception {
+		
+    	Set<InstrumentEntity> list = new HashSet<>();
+    	when(instrumentService.findInactive()).thenReturn(list);    	
+    	
+        mockMvc.perform(get("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+                ;        
+    }
+    
     @DisplayName(value="Find all instruments.") 
     @Test
     void findAllInstruments() throws Exception {
 		
-    	when(instrumentService.findAll()).thenReturn(new HashSet<>(instruments));    	
+    	Optional<Set<InstrumentEntity>> list = Optional.of(instruments.stream().collect(Collectors.toSet()));
+    	
+    	when(instrumentService.findAll()).thenReturn(list);    	
     	
         mockMvc.perform(get("/api/instrument")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
                 ;        
     }
-    */
+    
+    @DisplayName(value="Not found instruments.") 
+    @Test
+    void notFoundInstruments() throws Exception {
+		
+    	Set<InstrumentEntity> list = new HashSet<>();
+    	when(instrumentService.findAll()).thenReturn(Optional.ofNullable(list));    	
+    	
+        mockMvc.perform(get("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+                ;        
+    }
+    
+    @DisplayName(value="Find instrument by name.") 
+    @Test
+    void findInstrumentByName() throws Exception {
+		
+    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").build();
+    	
+    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(instrumentEntity);    	
+    	
+        mockMvc.perform(get("/api/instrument/guitar")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(instrumentEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(instrumentEntity.getId().intValue())))
+                ;        
+    }
+    
+    @DisplayName(value="Not Found an instrument by name.") 
+    @Test
+    void notFoundInstrumentByName() throws Exception {
+		
+    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(null);    	
+    	
+        mockMvc.perform(get("/api/instrument/batuque")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadRequest())                
+                ;
+    }
     
     @DisplayName(value="Create a new instrument")
     @Test

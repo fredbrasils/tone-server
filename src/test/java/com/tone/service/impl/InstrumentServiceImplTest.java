@@ -1,6 +1,7 @@
 package com.tone.service.impl;
 
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.service.InstrumentService;
 import com.tone.utils.ConstantsMessages;
 
@@ -30,8 +32,8 @@ class InstrumentServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").build();
-		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").build();
+		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").status(StatusEnum.ACTIVE).build();
+		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").status(StatusEnum.INACTIVE).build();
 		try {
 			instrumentService.save(instrument1);
 			instrumentService.save(instrument2);			
@@ -42,7 +44,7 @@ class InstrumentServiceImplTest {
 	@AfterEach
 	void close() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll();
+		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
 		instruments.stream().forEach(lut -> {
 			try {
 				instrumentService.delete(lut);
@@ -51,13 +53,12 @@ class InstrumentServiceImplTest {
 		});
 	}
 	
-	/*
 	@DisplayName("Find all instrument")
 	@Test
 	void findAll() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll();
-
+		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
+		
 		assertNotNull(instruments);
 		assertEquals(2, instruments.size());
 	}
@@ -69,7 +70,30 @@ class InstrumentServiceImplTest {
 		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
 		assertNotNull(instrument);		
 	}
-	*/
+	
+	@DisplayName("Not Found instrument by name")
+	@Test
+	void notfoundInstrumentByName() {
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("guitar");
+		assertNull(instrument);		
+	}
+	
+	@DisplayName("Find instrument active")
+	@Test
+	void findAllInstrumentActive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findActive();
+		assertEquals(1,instrument.size());		
+	}
+	
+	@DisplayName("Find instrument inactive")
+	@Test
+	void findAllInstrumentInactive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findInactive();
+		assertEquals(1,instrument.size());		
+	}
 	
 	@DisplayName("Save instrument")
 	@Test
@@ -98,7 +122,6 @@ class InstrumentServiceImplTest {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
 		}
 	}
-	
 	
 	@DisplayName("Update instrument")
 	@Test

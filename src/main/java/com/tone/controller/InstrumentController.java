@@ -1,9 +1,9 @@
 package com.tone.controller;
 
-import static com.tone.utils.ConstantsMessages.*;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
+import static com.tone.utils.ConstantsMessages.NOTBLANK_INSTRUMENT_ID;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,14 +45,53 @@ public class InstrumentController extends BaseController{
     @GetMapping
 	public ResponseEntity<?> findInstruments(HttpServletRequest request) {
 	  
-    	log.debug("instrumentController:findInstruments");
+    	log.debug("instrumentController:findAllInstruments");
     		     
-	    List<InstrumentEntity> list = new ArrayList<InstrumentEntity>(instrumentService.findAll());
+    	Set<InstrumentEntity> list = instrumentService.findAll().orElse(null);
 	    
-	    List listInstruments = Utils.convertFromTo(list, Instrument.class);
+    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
 	    
-        return ResponseEntity.ok(listInstruments);
+        return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));
     
+    }
+    
+    @GetMapping("/active")
+	public ResponseEntity<?> findInstrumentActive(HttpServletRequest request) {
+	  
+    	log.debug("instrumentController:findInstrumentActive");
+    		     
+    	Set<InstrumentEntity> list = instrumentService.findActive();
+	    
+    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
+	    
+        return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
+    }
+    
+    @GetMapping("/inactive")
+	public ResponseEntity<?> findInstrumentInactive(HttpServletRequest request) {
+	  
+    	log.debug("instrumentController:findInstrumentInactive");
+    		     
+    	Set<InstrumentEntity> list = instrumentService.findInactive();
+	    
+    	Set<Instrument> listInstruments = Utils.convertFromTo(list, Instrument.class);
+	    
+        return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
+    }
+    
+    @GetMapping("/{name}")
+	public ResponseEntity<?> findInstrumentByName(@PathVariable String name, HttpServletRequest request) {
+	  
+    	log.debug("instrumentController:findInstrumentByName");
+    		     
+	   InstrumentEntity instrumentEntity = instrumentService.findOptionalByName(name);
+	    
+	   if(instrumentEntity != null) {
+		   Instrument instrument = (Instrument) Utils.convertFromTo(instrumentEntity, Instrument.class);
+		   return ResponseEntity.ok(messageSuccess(instrument, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	   }else {
+		   return messageError(request, new String[] {MSG_ERROR_INSTRUMENT_NOTFOUND}, null);
+	   }	    
     }
     
     @PostMapping
