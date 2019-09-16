@@ -166,4 +166,64 @@ class InstrumentServiceImplTest {
 		
 		assertNotNull(instrumentService.findOptionalByName("Instrument 1"));
 	}
+	
+	@DisplayName("Active an instrument")
+	@Test
+	void shouldActiveInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
+		
+		try {
+			instrumentService.active(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertEquals(StatusEnum.ACTIVE, instrumentService.findOptionalByName("Instrument 2").getStatus());
+	}
+	
+	@DisplayName("Inactive an instrument")
+	@Test
+	void shouldInactiveInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		
+		try {
+			instrumentService.inactive(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertEquals(StatusEnum.INACTIVE, instrumentService.findOptionalByName("Instrument 1").getStatus());
+	}
+	
+	@DisplayName("Dont actived an instrument that doesn exist")
+	@Test
+	void shouldntActiveInstrumentThatDoesntExist() {		
+		
+		InstrumentEntity instrument = InstrumentEntity.builder().id(99l).build();
+		
+		try {
+			instrumentService.active(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}
+	}
+	
+	@DisplayName("Dont inactived an instrument that doesn exist")
+	@Test
+	void shouldntInactiveInstrumentThatDoesntExist() {		
+		
+		InstrumentEntity instrument = InstrumentEntity.builder().id(99l).build();
+		
+		try {
+			instrumentService.inactive(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}
+		
+	}
+	
 }

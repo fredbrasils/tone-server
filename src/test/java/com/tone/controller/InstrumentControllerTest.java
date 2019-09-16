@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.model.payload.Instrument;
 import com.tone.service.InstrumentService;
 
@@ -318,6 +319,122 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
 
         verify(instrumentService, times(1)).save(ArgumentMatchers.any());
 
+    }
+    
+    @DisplayName(value="Active instrument")
+    @Test
+    void activeInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
+    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
+    	
+    	when(instrumentService.active(ArgumentMatchers.any(InstrumentEntity.class))).thenReturn(instrumentEntity);
+
+        mockMvc.perform(put("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(instrumentEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(instrumentEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(instrumentEntity.getStatus().name())))
+                ;
+
+        verify(instrumentService).active(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Inactive instrument")
+    @Test
+    void inactiveInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
+    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
+    	
+    	when(instrumentService.inactive(ArgumentMatchers.any(InstrumentEntity.class))).thenReturn(instrumentEntity);
+
+        mockMvc.perform(put("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(instrumentEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(instrumentEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(instrumentEntity.getStatus().name())))
+                ;
+
+        verify(instrumentService).inactive(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Doesnt active instrument that doesnt exist")
+    @Test
+    void shouldntActiveInstrumentThatDoesntExist() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().name("guitar").status(StatusEnum.INACTIVE).build();
+    	
+        mockMvc.perform(put("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))                
+                ;
+
+        verify(instrumentService, times(0)).active(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Doesnt inactive instrument that doesnt exist")
+    @Test
+    void shouldntInactiveInstrumentThatDoesntExist() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().name("guitar").status(StatusEnum.ACTIVE).build();
+    	
+        mockMvc.perform(put("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))                
+                ;
+
+        verify(instrumentService, times(0)).inactive(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Throw exception when try active instrument")
+    @Test
+    void shouldTrowExceptionActiveInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
+    	
+    	when(instrumentService.active(ArgumentMatchers.any(InstrumentEntity.class))).thenThrow(BusinessException.class);
+    	
+        mockMvc.perform(put("/api/instrument/active")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))                
+                ;
+
+        verify(instrumentService).active(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Throw exception when try inactive instrument")
+    @Test
+    void shouldTrowExceptionInactiveInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
+    	
+    	when(instrumentService.inactive(ArgumentMatchers.any(InstrumentEntity.class))).thenThrow(BusinessException.class);
+    	
+        mockMvc.perform(put("/api/instrument/inactive")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))                
+                ;
+
+        verify(instrumentService).inactive(ArgumentMatchers.any());
     }
     
     /*
