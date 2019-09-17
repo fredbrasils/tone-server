@@ -1,5 +1,6 @@
 package com.tone.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.tone.utils.IgnoreField;
 
@@ -45,10 +47,12 @@ public class LuthierEntity extends BaseEntity{
 		this.features = features;
 	}
 
+	@NotBlank
 	private String name;
 	
 	private String description;
 	
+	@NotBlank
 	private String email;
 	
 	private String phone;
@@ -68,5 +72,13 @@ public class LuthierEntity extends BaseEntity{
 	@OneToMany(mappedBy = "luthier")
 	private Set<LuthierFeatureEntity> features;
 	
+	public void addInstrument(InstrumentEntity instrument) {
+		
+		if(this.instruments == null) {
+			this.instruments = new HashSet<InstrumentEntity>();
+		}
+		
+		this.instruments.add(instrument);
+	}
 	
 }

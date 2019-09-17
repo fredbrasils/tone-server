@@ -3,6 +3,9 @@ package com.tone.service.impl;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_SAVE;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -111,5 +114,28 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 		}		
 		
 		return instr;
+	}
+	
+	@Override
+	public void delete(InstrumentEntity instrument) throws BusinessException {
+		
+		Optional<InstrumentEntity> instrumentSaved = findById(instrument.getId());
+		
+		if(instrumentSaved.isPresent()) {
+			
+			if(!instrumentSaved.get().getLuthiers().isEmpty()) {
+				throw new BusinessException(MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER);
+			}
+			
+			try {
+				super.delete(instrumentSaved.get());
+			} catch (BusinessException e) {
+				throw new BusinessException(MSG_ERROR_INSTRUMENT_DELETE);
+			}
+			
+		}else {
+			throw new BusinessException(MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}
+		
 	}
 }

@@ -19,8 +19,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
+import com.tone.model.LuthierEntity;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.service.InstrumentService;
+import com.tone.service.LuthierService;
 import com.tone.utils.ConstantsMessages;
 
 @ExtendWith(SpringExtension.class)
@@ -30,14 +32,25 @@ class InstrumentServiceImplTest {
 	@Autowired
 	InstrumentService instrumentService;
 
+	@Autowired
+	LuthierService luthierService;
+	
 	@BeforeEach
 	void setUp() {
+		
+		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
+		
 		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").status(StatusEnum.ACTIVE).build();
 		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").status(StatusEnum.INACTIVE).build();
+		
 		try {
-			instrumentService.save(instrument1);
-			instrumentService.save(instrument2);			
-		} catch (BusinessException e) {
+			instrument1 = instrumentService.save(instrument1);
+			instrument2 = instrumentService.save(instrument2);
+			
+			luthier.addInstrument(instrument1);
+			luthierService.save(luthier);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -222,8 +235,21 @@ class InstrumentServiceImplTest {
 			fail();
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND);
-		}
-		
+		}		
 	}
 	
+	@DisplayName("Delete an instrument")
+	@Test
+	void shouldDeleteInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
+		
+		try {
+			instrumentService.delete(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertNull(instrumentService.findOptionalByName("Instrument 2"));
+	}
 }
