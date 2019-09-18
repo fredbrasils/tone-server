@@ -29,7 +29,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static List convertFromTo(List list, Class clazz) {
-		return convertFromTo(list, clazz, DEEP);
+		return list != null && !list.isEmpty() ? convertFromTo(list, clazz, DEEP) : null;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Set convertFromTo(Set list, Class clazz) {
-		return convertFromTo(list, clazz, DEEP);		
+		return list != null && !list.isEmpty() ? convertFromTo(list, clazz, DEEP) : null;		
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class Utils {
 	 */
 	@SuppressWarnings({ "rawtypes"})
 	public static Object convertFromTo(Object obj, Class clazz) {
-		return convertFromTo(obj, clazz, DEEP);
+		return obj != null ? convertFromTo(obj, clazz, DEEP) : null;
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public class Utils {
 	    			returnObject = field.get(obj);
 	    			
 	    			// verify if it is other entity's class
-	    			if(returnObject != null && field.getType().getName().startsWith(PACKAGE_MODEL)) {
+	    			if(returnObject != null && field.getType().getName().startsWith(PACKAGE_MODEL) && !field.getType().isEnum()) {
 	    				// convert the field to respective
 	    				returnObject = convertFromTo(returnObject, clazz, --deep);	    				
 

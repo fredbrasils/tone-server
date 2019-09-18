@@ -1,13 +1,16 @@
 package com.tone.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import com.tone.utils.IgnoreField;
 
@@ -33,7 +36,7 @@ public class LuthierEntity extends BaseEntity{
 	
 	@Builder
 	public LuthierEntity(Long id, String name, String email, String phone, String address, 
-			Set<SocialNetworkEntity> socialNetworks, Set<InstrumentEntity> instruments,
+			Set<SocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
 			Set<LuthierFeatureEntity> features) {
 		super(id);
 		this.name = name;
@@ -45,28 +48,42 @@ public class LuthierEntity extends BaseEntity{
 		this.features = features;
 	}
 
+	@NotBlank
 	private String name;
 	
 	private String description;
 	
+	@NotBlank
 	private String email;
 	
 	private String phone;
 	
 	private String address;
 
+	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")
 	private Set<SocialNetworkEntity> socialNetworks;
 	
-	@ManyToMany
+	@EqualsAndHashCode.Exclude
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 	  name = "luthier_instruments", 
 	  joinColumns = @JoinColumn(name = "luthier_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "instrument_id"))
-	private Set<InstrumentEntity> instruments;
-	
+	private Set<InstrumentEntity> instruments = new HashSet<>();
+
+	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")
 	private Set<LuthierFeatureEntity> features;
 	
+	
+	public void addInstrument(InstrumentEntity instrument) {
+		
+		if(this.instruments == null) {
+			this.instruments = new HashSet<InstrumentEntity>();
+		}
+		
+		this.instruments.add(instrument);
+	}
 	
 }

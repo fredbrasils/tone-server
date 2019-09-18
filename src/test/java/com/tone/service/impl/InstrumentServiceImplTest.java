@@ -1,6 +1,8 @@
 package com.tone.service.impl;
 
 
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,8 +20,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.InstrumentEntity;
+import com.tone.model.LuthierEntity;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.service.InstrumentService;
+import com.tone.service.LuthierService;
 import com.tone.utils.ConstantsMessages;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -28,21 +34,34 @@ class InstrumentServiceImplTest {
 	@Autowired
 	InstrumentService instrumentService;
 
+	@Autowired
+	LuthierService luthierService;
+	
 	@BeforeEach
 	void setUp() {
-		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").build();
-		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").build();
+		
+		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
+		
+		InstrumentEntity instrument1 = InstrumentEntity.builder().name("Instrument 1").status(StatusEnum.ACTIVE).build();
+		InstrumentEntity instrument2 = InstrumentEntity.builder().name("Instrument 2").status(StatusEnum.INACTIVE).build();
+		InstrumentEntity instrument3 = InstrumentEntity.builder().name("Instrument 3").status(StatusEnum.ACTIVE).build();
+		
 		try {
-			instrumentService.save(instrument1);
-			instrumentService.save(instrument2);			
+			instrument1 = instrumentService.save(instrument1);
+			instrument2 = instrumentService.save(instrument2);
+			instrument3 = instrumentService.save(instrument3);
+			
+			luthier.addInstrument(instrument3);
+			luthierService.save(luthier);
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 	
 	@AfterEach
 	void close() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll();
+		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
 		instruments.stream().forEach(lut -> {
 			try {
 				instrumentService.delete(lut);
@@ -51,15 +70,14 @@ class InstrumentServiceImplTest {
 		});
 	}
 	
-	/*
 	@DisplayName("Find all instrument")
 	@Test
 	void findAll() {
 		
-		Set<InstrumentEntity> instruments = instrumentService.findAll();
-
+		Set<InstrumentEntity> instruments = instrumentService.findAll().orElse(null);
+		
 		assertNotNull(instruments);
-		assertEquals(2, instruments.size());
+		assertEquals(3, instruments.size());
 	}
 
 	@DisplayName("Find instrument by name")
@@ -69,20 +87,43 @@ class InstrumentServiceImplTest {
 		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
 		assertNotNull(instrument);		
 	}
-	*/
+	
+	@DisplayName("Not Found instrument by name")
+	@Test
+	void notfoundInstrumentByName() {
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("guitar");
+		assertNull(instrument);		
+	}
+	
+	@DisplayName("Find instrument active")
+	@Test
+	void findAllInstrumentActive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findActive();
+		assertEquals(2,instrument.size());		
+	}
+	
+	@DisplayName("Find instrument inactive")
+	@Test
+	void findAllInstrumentInactive() {
+		
+		Set<InstrumentEntity> instrument = instrumentService.findInactive();
+		assertEquals(1,instrument.size());		
+	}
 	
 	@DisplayName("Save instrument")
 	@Test
 	void save() {
 		
-		InstrumentEntity instrument3 = InstrumentEntity.builder().name("Instrument 3").build();
+		InstrumentEntity instrument4 = InstrumentEntity.builder().name("Instrument 4").build();
 		try {
-			instrumentService.save(instrument3);			
-		} catch (Exception e) {
+			instrumentService.save(instrument4);			
+		} catch (BusinessException e) {
 			fail();
 		}
 		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 3");
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 4");
 		assertNotNull(instrument);		
 	}
 	
@@ -94,22 +135,155 @@ class InstrumentServiceImplTest {
 		try {
 			instrumentService.save(instrument2);
 			fail("Fail: Saved an instrument with an exists name");
-		}catch (Exception e) {
+		}catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
 		}
 	}
 	
-	/*
 	@DisplayName("Update instrument")
 	@Test
 	void update() {		
 		
 		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
 		instrument.setName("new instrument");
-		instrumentService.save(instrument);
+		try {
+			instrumentService.save(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
 		
 		assertNotNull(instrumentService.findOptionalByName("new instrument"));		
 	}
-	*/
 	
+	@DisplayName("Cant update an instrument with an exists name")
+	@Test
+	void shouldntUpdateWithExistsName() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		instrument.setName("Instrument 2");
+		try {
+			instrumentService.save(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
+		}
+	}
+	
+	@DisplayName("Update an instrument with the same name")
+	@Test
+	void shouldUpdateWithSameName() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		instrument.setName("Instrument 1");
+		try {
+			instrumentService.save(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertNotNull(instrumentService.findOptionalByName("Instrument 1"));
+	}
+	
+	@DisplayName("Active an instrument")
+	@Test
+	void shouldActiveInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
+		
+		try {
+			instrumentService.active(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertEquals(StatusEnum.ACTIVE, instrumentService.findOptionalByName("Instrument 2").getStatus());
+	}
+	
+	@DisplayName("Inactive an instrument")
+	@Test
+	void shouldInactiveInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		
+		try {
+			instrumentService.inactive(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertEquals(StatusEnum.INACTIVE, instrumentService.findOptionalByName("Instrument 1").getStatus());
+	}
+	
+	@DisplayName("Dont actived an instrument that doesn exist")
+	@Test
+	void shouldntActiveInstrumentThatDoesntExist() {		
+		
+		InstrumentEntity instrument = InstrumentEntity.builder().id(99l).build();
+		
+		try {
+			instrumentService.active(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}
+	}
+	
+	@DisplayName("Dont inactived an instrument that doesn exist")
+	@Test
+	void shouldntInactiveInstrumentThatDoesntExist() {		
+		
+		InstrumentEntity instrument = InstrumentEntity.builder().id(99l).build();
+		
+		try {
+			instrumentService.inactive(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}		
+	}
+	
+	@DisplayName("Delete an instrument")
+	@Test
+	void shouldDeleteInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+		
+		try {
+			instrumentService.delete(instrument);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertNull(instrumentService.findOptionalByName("Instrument 1"));
+	}
+	
+	@DisplayName("Cant delete an instrument with luthier")
+	@Test
+	void shouldntDeleteInstrument() {		
+		
+		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 3");
+		
+		try {
+			instrumentService.delete(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER);
+		}
+		
+		assertNotNull(instrumentService.findOptionalByName("Instrument 3"));
+	}
+	
+	@DisplayName("Cant delete an instrument without id")
+	@Test
+	void shouldntDeleteInstrumentWithoutId() {		
+		
+		InstrumentEntity instrument = InstrumentEntity.builder().id(99l).build();
+		
+		try {
+			instrumentService.delete(instrument);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), MSG_ERROR_INSTRUMENT_NOTFOUND);
+		}
+	}
 }
