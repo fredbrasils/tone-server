@@ -25,6 +25,7 @@ import com.tone.model.enumm.OperationEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,8 @@ import lombok.Setter;
  * @author Fred Brasil
  *
  */
+
+@EqualsAndHashCode
 @Getter
 @Setter
 @AllArgsConstructor

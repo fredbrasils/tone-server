@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -35,7 +36,7 @@ public class LuthierEntity extends BaseEntity{
 	
 	@Builder
 	public LuthierEntity(Long id, String name, String email, String phone, String address, 
-			Set<SocialNetworkEntity> socialNetworks, Set<InstrumentEntity> instruments,
+			Set<SocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
 			Set<LuthierFeatureEntity> features) {
 		super(id);
 		this.name = name;
@@ -59,18 +60,22 @@ public class LuthierEntity extends BaseEntity{
 	
 	private String address;
 
+	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")
 	private Set<SocialNetworkEntity> socialNetworks;
 	
-	@ManyToMany
+	@EqualsAndHashCode.Exclude
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 	  name = "luthier_instruments", 
 	  joinColumns = @JoinColumn(name = "luthier_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "instrument_id"))
-	private Set<InstrumentEntity> instruments;
-	
+	private Set<InstrumentEntity> instruments = new HashSet<>();
+
+	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")
 	private Set<LuthierFeatureEntity> features;
+	
 	
 	public void addInstrument(InstrumentEntity instrument) {
 		

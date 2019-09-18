@@ -35,6 +35,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	/**
 	 * @param entity Instrument that will be save
 	 * @return Instrument saved
+	 * @throws BusinessException 
 	 */
 	@Override
 	public InstrumentEntity save(InstrumentEntity entity) throws BusinessException {
@@ -78,6 +79,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	/**
 	 * @param entity Instrument that will be actived
 	 * @return Instrument actived
+	 * @throws BusinessException 
 	 */
 	public InstrumentEntity active(InstrumentEntity entity) throws BusinessException{
 		return activeOrInactive(entity, StatusEnum.ACTIVE);
@@ -86,6 +88,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	/**
 	 * @param entity Instrument that will be inactived
 	 * @return Instrument inactived
+	 * @throws BusinessException 
 	 */
 	public InstrumentEntity inactive(InstrumentEntity entity) throws BusinessException{
 		return activeOrInactive(entity, StatusEnum.INACTIVE);
@@ -95,6 +98,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	 * @param entity Instrument that will be actived or inactived
 	 * @param status The new Instrument's status 
 	 * @return Instrument actived or inactived
+	 * @throws BusinessException 
 	 */
 	public InstrumentEntity activeOrInactive(InstrumentEntity instrument, StatusEnum status) throws BusinessException{
 		
@@ -116,6 +120,11 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 		return instr;
 	}
 	
+	/**
+	 * @param entity Instrument that will be deleted
+	 * @return
+	 * @throws BusinessException 
+	 */
 	@Override
 	public void delete(InstrumentEntity instrument) throws BusinessException {
 		

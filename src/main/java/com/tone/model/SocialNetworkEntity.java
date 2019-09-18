@@ -25,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "social-network")
+@Table(name = "social_network")
 public class SocialNetworkEntity extends BaseEntity{
 
 	@IgnoreField
@@ -43,9 +43,10 @@ public class SocialNetworkEntity extends BaseEntity{
 	
 	private String link;
 	
+	@EqualsAndHashCode.Exclude
 	@NotBlank
 	@ManyToOne
 	@JoinColumn(name = "luthier_id")
-	private LuthierEntity luthier;
+	private LuthierEntity luthier;	
 	
 }

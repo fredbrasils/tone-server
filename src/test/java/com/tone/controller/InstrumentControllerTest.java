@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -437,12 +438,11 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
         verify(instrumentService).inactive(ArgumentMatchers.any());
     }
     
-    /*
     @DisplayName(value="Delete instrument")
     @Test
     void deleteInstrument() throws Exception {
     	
-    	Instrument instrument = Instrument.builder().id(1l).name("home").build();
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").build();
     	
         mockMvc.perform(delete("/api/instrument")
         		.accept(MediaType.APPLICATION_JSON)
@@ -452,7 +452,122 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
                 ;
 
         verify(instrumentService).delete(ArgumentMatchers.any());
-
     }
-    */
+    
+    @DisplayName(value="Cant delete instrument without id")
+    @Test
+    void shouldntDeleteInstrumentWithoutId() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().name("guitar").build();
+    	
+        mockMvc.perform(delete("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+                ;
+
+        verify(instrumentService, times(0)).delete(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Cant delete instrument without name")
+    @Test
+    void shouldntDeleteInstrumentWithoutName() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).build();
+    	
+        mockMvc.perform(delete("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+                ;
+
+        verify(instrumentService, times(0)).delete(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Cant delete instrument")
+    @Test
+    void shouldntDeleteInstrument() throws Exception {
+    	
+    	Instrument instrument = Instrument.builder().id(1l).name("guitar").build();
+    	
+    	Mockito.doThrow(BusinessException.class).when(instrumentService).delete(ArgumentMatchers.any(InstrumentEntity.class));
+    	
+        mockMvc.perform(delete("/api/instrument")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(instrument))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+                ;
+
+        verify(instrumentService, times(1)).delete(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Delete list of instruments")
+    @Test
+    void deleteListOfInstruments() throws Exception {
+    	
+    	Instrument instrument1 = Instrument.builder().id(1l).name("guitar").build();
+    	Instrument instrument2 = Instrument.builder().id(2l).name("drum").build();
+    	Instrument instrument3 = Instrument.builder().id(3l).name("bass").build();
+    	List<Instrument> list = new ArrayList<Instrument>();
+    	list.add(instrument1);list.add(instrument2);list.add(instrument3);
+    	
+        mockMvc.perform(delete("/api/instrument/list")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(list))).andDo(print())
+                .andExpect(status().isOk())
+                ;
+
+        verify(instrumentService, times(3)).delete(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Cant delete list of instruments without id")
+    @Test
+    void shouldntDeleteListOfInstrumentsWithoutId() throws Exception {
+    	
+    	Instrument instrument1 = Instrument.builder().id(1l).name("guitar").build();
+    	Instrument instrument2 = Instrument.builder().name("drum").build();
+    	Instrument instrument3 = Instrument.builder().id(3l).name("bass").build();
+    	List<Instrument> list = new ArrayList<Instrument>();
+    	list.add(instrument1);list.add(instrument2);list.add(instrument3);
+    	
+        mockMvc.perform(delete("/api/instrument/list")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(list))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+                ;
+
+        verify(instrumentService, times(0)).delete(ArgumentMatchers.any());
+    }
+    
+    @DisplayName(value="Cant delete list of instruments")
+    @Test
+    void shouldntDeleteListOfInstruments() throws Exception {
+    	
+    	Instrument instrument1 = Instrument.builder().id(1l).name("guitar").build();
+    	Instrument instrument2 = Instrument.builder().id(2l).name("drum").build();
+    	Instrument instrument3 = Instrument.builder().id(3l).name("bass").build();
+    	List<Instrument> list = new ArrayList<Instrument>();
+    	list.add(instrument1);list.add(instrument2);list.add(instrument3);
+    	
+    	Mockito.doThrow(BusinessException.class).when(instrumentService).delete(ArgumentMatchers.any(InstrumentEntity.class));
+    	
+        mockMvc.perform(delete("/api/instrument/list")
+        		.accept(MediaType.APPLICATION_JSON)
+        		.contentType(MediaType.APPLICATION_JSON)        		
+        		.content(asJsonString(list))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+                ;
+
+        verify(instrumentService, times(1)).delete(ArgumentMatchers.any());
+    }
 }
