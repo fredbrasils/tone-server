@@ -3,6 +3,7 @@ package com.tone.controller;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.NOTBLANK_INSTRUMENT_ID;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,12 @@ public class InstrumentController extends BaseController{
         this.instrumentService = instrumentService;
     }
     
-    @GetMapping
+    /**
+     * @param request
+     * @return Return all instruments
+     */
+    @SuppressWarnings("unchecked")
+	@GetMapping
 	public ResponseEntity<?> findInstruments(HttpServletRequest request) {
 	  
     	log.debug("instrumentController:findAllInstruments");
@@ -54,6 +60,11 @@ public class InstrumentController extends BaseController{
         return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
+    /**
+     * @param request
+     * @return Return all instruments actived
+     */
+    @SuppressWarnings("unchecked")
     @GetMapping("/active")
 	public ResponseEntity<?> findInstrumentActive(HttpServletRequest request) {
 	  
@@ -66,6 +77,11 @@ public class InstrumentController extends BaseController{
         return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
     
+    /**
+     * @param request
+     * @return Return all instruments inactived
+     */
+    @SuppressWarnings("unchecked")
     @GetMapping("/inactive")
 	public ResponseEntity<?> findInstrumentInactive(HttpServletRequest request) {
 	  
@@ -78,6 +94,11 @@ public class InstrumentController extends BaseController{
         return ResponseEntity.ok(messageSuccess(listInstruments, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
     
+    /**
+     * @param name Instrument's name
+     * @param request
+     * @return Return the instrument required
+     */
     @GetMapping("/{name}")
 	public ResponseEntity<?> findInstrumentByName(@PathVariable String name, HttpServletRequest request) {
 	  
@@ -93,6 +114,14 @@ public class InstrumentController extends BaseController{
 	   }	    
     }
     
+    /**
+     * Save instrument
+     * @param instrument Instrument that will be saved
+     * @param result
+     * @param request
+     * @param errors
+     * @return return instrument saved
+     */
     @PostMapping
     public ResponseEntity<GenericResponse> createInstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
@@ -115,6 +144,14 @@ public class InstrumentController extends BaseController{
     	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
+    /**
+     * Update instrument
+     * @param instrument Instrument that will be updated
+     * @param result
+     * @param request
+     * @param errors
+     * @return return instrument updated
+     */
     @PutMapping
     public ResponseEntity<GenericResponse> updateinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
@@ -143,24 +180,78 @@ public class InstrumentController extends BaseController{
     	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
+    /**
+     * 
+     * @param instrument Instrument that will be deleted
+     * @param result
+     * @param request
+     * @param errors
+     * @return 
+     */
     @DeleteMapping
-    public ResponseEntity<GenericResponse> deleteinstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
+    public ResponseEntity<GenericResponse> deleteInstrument(@Valid @RequestBody Instrument instrument, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
-    	if (!result.hasErrors()) {
-    		InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
-			try {
-				instrumentService.delete(instrumentEntity);
+    	if (!result.hasErrors() && instrument.getId() != null) {
+    	
+    		try {
+    			
+    			InstrumentEntity instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
+    			instrumentService.delete(instrumentEntity);
+
 			} catch (BusinessException e) {
 				return messageError(request, new String[] {e.getMessage()}, null);
 			}
     	}else {
-			return messageError(request, validateErrors(result), null);
+    		
+    		if(result.hasErrors()) {
+    			return messageError(request, validateErrors(result), null);
+    		}else {
+    			return messageError(request, new String[] {NOTBLANK_INSTRUMENT_ID}, null);
+    		}
 		} 
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
+    /**
+     * 
+     * @param listInstrument Instruments that will be deleted
+     * @param request
+     * @return
+     */
+    @DeleteMapping("/list")
+    public ResponseEntity<GenericResponse> deleteAllInstrument(@RequestBody List<Instrument> listInstrument,
+			HttpServletRequest request) {    	
+    	    
+    	for(Instrument instrument : listInstrument) {    		
+    		if(instrument.getId() == null) {
+    			return messageError(request, new String[] {NOTBLANK_INSTRUMENT_ID}, null);
+    		}
+    	}
+    	
+		try {
+			
+			InstrumentEntity instrumentEntity = null;
+			
+			for(Instrument instrument : listInstrument) {
+				instrumentEntity = (InstrumentEntity) Utils.convertFromTo(instrument, InstrumentEntity.class);    			
+				instrumentService.delete(instrumentEntity);
+			}
+
+		} catch (BusinessException e) {
+			return messageError(request, new String[] {e.getMessage()}, null);
+		}
+
+    	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
+    }
+    
+    /**
+     * 
+     * @param instrument Instrument that will be actived
+     * @param request
+     * @return return instrument actived
+     */
     @PutMapping("/active")
     public ResponseEntity<GenericResponse> active(@RequestBody Instrument instrument, HttpServletRequest request) {
     	
@@ -181,6 +272,12 @@ public class InstrumentController extends BaseController{
     	return ResponseEntity.ok(messageSuccess(instrumentSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
     
+    /**
+     * 
+     * @param instrument Instrument that will be inactived
+     * @param request
+     * @return return instrument inactived
+     */
     @PutMapping("/inactive")
     public ResponseEntity<GenericResponse> inactive(@RequestBody Instrument instrument, HttpServletRequest request) {
     	
