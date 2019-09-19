@@ -41,7 +41,7 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	public SocialNetworkEntity save(SocialNetworkEntity entity) throws BusinessException {
 
 		log.info("Save socialNetwork");
-		SocialNetworkEntity socialNetwork = this.findOptionalByName(entity.getName());
+		SocialNetworkEntity socialNetwork = this.findByName(entity.getName());
 		
 		if(socialNetwork != null && socialNetwork.getId() != entity.getId()) {
 			throw new BusinessException(MSG_ERROR_SOCIAL_NETWORK_EXIST);
@@ -49,20 +49,6 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 		
 		return super.save(entity);
 	}
-
-	@Override
-	public Set<SocialNetworkEntity> findActive() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Set<SocialNetworkEntity> findInactive() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	public SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException {
@@ -83,25 +69,25 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	 * 
 	 */
 	@Override
-	public SocialNetworkEntity findOptionalByName(String name) {
+	public SocialNetworkEntity findByName(String name) {
 		return this.socialNetworkRepository.findOptionalByNameIgnoreCase(name).orElse(null);
 	}	
 
 	/**
 	 * @return SocialNetwork inactived
 	 */
-	/*@Override
+	@Override
 	public Set<SocialNetworkEntity> findInactive() {
 		return this.socialNetworkRepository.findAllOptionalByStatus(StatusEnum.INACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}*/
+	}
 	
 	/**
 	 * @return SocialNetwork actived
 	 */
-	/*@Override
+	@Override
 	public Set<SocialNetworkEntity> findActive() {
 		return this.socialNetworkRepository.findAllOptionalByStatus(StatusEnum.ACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}*/
+	}
 
 	/**
 	 * @param entity SocialNetwork that will be actived

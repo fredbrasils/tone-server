@@ -59,14 +59,14 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @BeforeEach
     void setUp() {
     	socialNetworks = new ArrayList<SocialNetworkEntity>();
-    	socialNetworks.add(SocialNetworkEntity.builder().id(1l).name("Instagram").build());
-    	socialNetworks.add(SocialNetworkEntity.builder().id(2l).name("Facebook").build());
+    	socialNetworks.add(SocialNetworkEntity.builder().id(1l).name("Instagram").status(StatusEnum.ACTIVE).build());
+    	socialNetworks.add(SocialNetworkEntity.builder().id(2l).name("Facebook").status(StatusEnum.ACTIVE).build());
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(socialNetworkController)
                 .build();
     }    
-    /*
+    
     @DisplayName(value="Find all socialNetworks active.") 
     @Test
     void findAllSocialNetworksActive() throws Exception {
@@ -163,11 +163,11 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void findSocialNetworkByName() throws Exception {
 		
-    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("guitar").build();
+    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("facebook").build();
     	
-    	when(socialNetworkService.findOptionalByName(Mockito.anyString())).thenReturn(socialNetworkEntity);    	
+    	when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(socialNetworkEntity);    	
     	
-        mockMvc.perform(get("/api/socialNetwork/guitar")
+        mockMvc.perform(get("/api/socialNetwork/facebook")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
@@ -180,15 +180,15 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void notFoundSocialNetworkByName() throws Exception {
 		
-    	when(socialNetworkService.findOptionalByName(Mockito.anyString())).thenReturn(null);    	
+    	when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(null);    	
     	
-        mockMvc.perform(get("/api/socialNetwork/batuque")
+        mockMvc.perform(get("/api/socialNetwork/myspace")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest())                
                 ;
     }
-    */
+    
     @DisplayName(value="Create a new socialNetwork")
     @Test
     void registerSocialNetwork() throws Exception {
