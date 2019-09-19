@@ -247,13 +247,13 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
         verify(socialNetworkService, times(1)).save(ArgumentMatchers.any());
 
     }
-    /*
+    
     @DisplayName(value="Update socialNetwork")
     @Test
     void updateSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").build();
-    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("guitar").build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
+    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
     	
     	when(socialNetworkService.save(ArgumentMatchers.any(SocialNetworkEntity.class))).thenReturn(socialNetworkEntity);
 
@@ -264,6 +264,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.object.name", equalTo(socialNetworkEntity.getName())))
                 .andExpect(jsonPath("$.object.id", equalTo(socialNetworkEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(socialNetworkEntity.getStatus().name())))
                 ;
 
         verify(socialNetworkService).save(ArgumentMatchers.any());
@@ -291,7 +292,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void dontUpdateSocialNetworkWithoutId() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().name("SocialNetwork").build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().name("instagram").build();
 
         mockMvc.perform(put("/api/socialNetwork")
         		.accept(MediaType.APPLICATION_JSON)
@@ -308,7 +309,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void dontRegisterAnExistsSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().name("guitar").id(1l).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().name("instagram").id(1l).build();
     	
     	when(socialNetworkService.save(ArgumentMatchers.any(SocialNetworkEntity.class))).thenThrow(BusinessException.class);    	
 
@@ -322,7 +323,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
         verify(socialNetworkService, times(1)).save(ArgumentMatchers.any());
 
     }
-    
+    /*
     @DisplayName(value="Active socialNetwork")
     @Test
     void activeSocialNetwork() throws Exception {
