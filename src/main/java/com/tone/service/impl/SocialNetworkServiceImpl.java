@@ -49,19 +49,6 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 		
 		return super.save(entity);
 	}
-
-	@Override
-	public SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public SocialNetworkEntity inactive(SocialNetworkEntity entity) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	/**
 	 * @param name SocialNetwork's name
@@ -94,18 +81,18 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	 * @return SocialNetwork actived
 	 * @throws BusinessException 
 	 */
-	/*public SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException{
+	public SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException{
 		return activeOrInactive(entity, StatusEnum.ACTIVE);
-	}*/
+	}
 	
 	/**
 	 * @param entity SocialNetwork that will be inactived
 	 * @return SocialNetwork inactived
 	 * @throws BusinessException 
 	 */
-	/*public SocialNetworkEntity inactive(SocialNetworkEntity entity) throws BusinessException{
+	public SocialNetworkEntity inactive(SocialNetworkEntity entity) throws BusinessException{
 		return activeOrInactive(entity, StatusEnum.INACTIVE);
-	}*/
+	}
 	
 	/**
 	 * @param entity SocialNetwork that will be actived or inactived
@@ -113,7 +100,7 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	 * @return SocialNetwork actived or inactived
 	 * @throws BusinessException 
 	 */
-	/*public SocialNetworkEntity activeOrInactive(SocialNetworkEntity socialNetwork, StatusEnum status) throws BusinessException{
+	public SocialNetworkEntity activeOrInactive(SocialNetworkEntity socialNetwork, StatusEnum status) throws BusinessException{
 		
 		Optional<SocialNetworkEntity> socialNetworkSaved = findById(socialNetwork.getId());
 		SocialNetworkEntity instr = null;
@@ -131,7 +118,7 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 		}		
 		
 		return instr;
-	}*/
+	}
 	
 	/**
 	 * @param entity SocialNetwork that will be deleted

@@ -323,13 +323,13 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
         verify(socialNetworkService, times(1)).save(ArgumentMatchers.any());
 
     }
-    /*
+    
     @DisplayName(value="Active socialNetwork")
     @Test
     void activeSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
-    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
+    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
     	
     	when(socialNetworkService.active(ArgumentMatchers.any(SocialNetworkEntity.class))).thenReturn(socialNetworkEntity);
 
@@ -350,8 +350,8 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void inactiveSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
-    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
+    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
     	
     	when(socialNetworkService.inactive(ArgumentMatchers.any(SocialNetworkEntity.class))).thenReturn(socialNetworkEntity);
 
@@ -372,7 +372,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntActiveSocialNetworkThatDoesntExist() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().name("guitar").status(StatusEnum.INACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().name("instagram").status(StatusEnum.INACTIVE).build();
     	
         mockMvc.perform(put("/api/socialNetwork/active")
         		.accept(MediaType.APPLICATION_JSON)
@@ -389,7 +389,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntInactiveSocialNetworkThatDoesntExist() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().name("guitar").status(StatusEnum.ACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().name("instagram").status(StatusEnum.ACTIVE).build();
     	
         mockMvc.perform(put("/api/socialNetwork/inactive")
         		.accept(MediaType.APPLICATION_JSON)
@@ -406,7 +406,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldTrowExceptionActiveSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").status(StatusEnum.INACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
     	
     	when(socialNetworkService.active(ArgumentMatchers.any(SocialNetworkEntity.class))).thenThrow(BusinessException.class);
     	
@@ -425,7 +425,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldTrowExceptionInactiveSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").status(StatusEnum.ACTIVE).build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
     	
     	when(socialNetworkService.inactive(ArgumentMatchers.any(SocialNetworkEntity.class))).thenThrow(BusinessException.class);
     	
@@ -439,7 +439,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
 
         verify(socialNetworkService).inactive(ArgumentMatchers.any());
     }
-    
+    /*
     @DisplayName(value="Delete socialNetwork")
     @Test
     void deleteSocialNetwork() throws Exception {

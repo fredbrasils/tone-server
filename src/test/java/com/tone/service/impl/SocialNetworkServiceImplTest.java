@@ -187,12 +187,11 @@ class SocialNetworkServiceImplTest {
 		assertNotNull(socialNetworkService.findByName("instagram"));
 	}
 	
-	/*
 	@DisplayName("Active an socialNetwork")
 	@Test
 	void shouldActiveSocialNetwork() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 2");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("Website");
 		
 		try {
 			socialNetworkService.active(socialNetwork);
@@ -200,14 +199,14 @@ class SocialNetworkServiceImplTest {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.ACTIVE, socialNetworkService.findOptionalByName("SocialNetwork 2").getStatus());
+		assertEquals(StatusEnum.ACTIVE, socialNetworkService.findByName("Website").getStatus());
 	}
 	
 	@DisplayName("Inactive an socialNetwork")
 	@Test
 	void shouldInactiveSocialNetwork() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 1");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("facebook");
 		
 		try {
 			socialNetworkService.inactive(socialNetwork);
@@ -215,7 +214,7 @@ class SocialNetworkServiceImplTest {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.INACTIVE, socialNetworkService.findOptionalByName("SocialNetwork 1").getStatus());
+		assertEquals(StatusEnum.INACTIVE, socialNetworkService.findByName("facebook").getStatus());
 	}
 	
 	@DisplayName("Dont actived an socialNetwork that doesn exist")
@@ -245,7 +244,7 @@ class SocialNetworkServiceImplTest {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_NOTFOUND);
 		}		
 	}
-	
+	/*
 	@DisplayName("Delete an socialNetwork")
 	@Test
 	void shouldDeleteSocialNetwork() {		
