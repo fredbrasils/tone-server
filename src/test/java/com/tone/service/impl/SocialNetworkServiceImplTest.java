@@ -141,28 +141,29 @@ class SocialNetworkServiceImplTest {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_EXIST);
 		}
 	}
-	/*
+	
 	@DisplayName("Update socialNetwork")
 	@Test
 	void update() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 1");
-		socialNetwork.setName("new socialNetwork");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.setName("myspace");
 		try {
 			socialNetworkService.save(socialNetwork);
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNotNull(socialNetworkService.findOptionalByName("new socialNetwork"));		
+		assertNull(socialNetworkService.findByName("instagram"));
+		assertNotNull(socialNetworkService.findByName("myspace"));
 	}
 	
 	@DisplayName("Cant update an socialNetwork with an exists name")
 	@Test
 	void shouldntUpdateWithExistsName() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 1");
-		socialNetwork.setName("SocialNetwork 2");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.setName("facebook");
 		try {
 			socialNetworkService.save(socialNetwork);
 			fail();
@@ -175,17 +176,18 @@ class SocialNetworkServiceImplTest {
 	@Test
 	void shouldUpdateWithSameName() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 1");
-		socialNetwork.setName("SocialNetwork 1");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.setName("instagram");
 		try {
 			socialNetworkService.save(socialNetwork);
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNotNull(socialNetworkService.findOptionalByName("SocialNetwork 1"));
+		assertNotNull(socialNetworkService.findByName("instagram"));
 	}
 	
+	/*
 	@DisplayName("Active an socialNetwork")
 	@Test
 	void shouldActiveSocialNetwork() {		
