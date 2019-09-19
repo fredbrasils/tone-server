@@ -36,7 +36,7 @@ public class LuthierEntity extends BaseEntity{
 	
 	@Builder
 	public LuthierEntity(Long id, String name, String email, String phone, String address, 
-			Set<SocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
+			Set<LuthierSocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
 			Set<LuthierFeatureEntity> features) {
 		super(id);
 		this.name = name;
@@ -62,7 +62,7 @@ public class LuthierEntity extends BaseEntity{
 
 	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")
-	private Set<SocialNetworkEntity> socialNetworks;
+	private Set<LuthierSocialNetworkEntity> socialNetworks;
 	
 	@EqualsAndHashCode.Exclude
 	@ManyToMany(fetch = FetchType.LAZY)
