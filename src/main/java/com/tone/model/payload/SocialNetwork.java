@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
 
-import com.tone.model.enumm.SocialNetworkTypeEnum;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
@@ -28,12 +28,8 @@ public class SocialNetwork implements Serializable{
 	private Long id;
 	
 	@NotBlank
-	private SocialNetworkTypeEnum type;
+	private String name;
 	
-	@NotBlank
-	private String link;
-	
-	@NotBlank
-	private Luthier luthier;
+	private StatusEnum status;
 	
 }
