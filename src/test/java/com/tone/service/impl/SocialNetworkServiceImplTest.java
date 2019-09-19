@@ -51,6 +51,7 @@ class SocialNetworkServiceImplTest {
 			socialNetwork1 = socialNetworkService.save(socialNetwork1);
 			socialNetwork2 = socialNetworkService.save(socialNetwork2);
 			socialNetwork3 = socialNetworkService.save(socialNetwork3);
+			socialNetwork4 = socialNetworkService.save(socialNetwork4);
 			
 			/*luthier.addSocialNetwork(socialNetwork3);
 			luthierService.save(luthier);*/
@@ -70,7 +71,7 @@ class SocialNetworkServiceImplTest {
 			}
 		});
 	}
-	/*
+	
 	@DisplayName("Find all socialNetwork")
 	@Test
 	void findAll() {
@@ -78,14 +79,14 @@ class SocialNetworkServiceImplTest {
 		Set<SocialNetworkEntity> socialNetworks = socialNetworkService.findAll().orElse(null);
 		
 		assertNotNull(socialNetworks);
-		assertEquals(3, socialNetworks.size());
+		assertEquals(4, socialNetworks.size());
 	}
 
 	@DisplayName("Find socialNetwork by name")
 	@Test
 	void findByName() {
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 2");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
 		assertNotNull(socialNetwork);		
 	}
 	
@@ -93,7 +94,7 @@ class SocialNetworkServiceImplTest {
 	@Test
 	void notfoundSocialNetworkByName() {
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("guitar");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("myspace");
 		assertNull(socialNetwork);		
 	}
 	
@@ -110,9 +111,9 @@ class SocialNetworkServiceImplTest {
 	void findAllSocialNetworkInactive() {
 		
 		Set<SocialNetworkEntity> socialNetwork = socialNetworkService.findInactive();
-		assertEquals(1,socialNetwork.size());		
+		assertEquals(2,socialNetwork.size());		
 	}
-	*/
+	
 	@DisplayName("Save socialNetwork")
 	@Test
 	void save() {
@@ -124,7 +125,7 @@ class SocialNetworkServiceImplTest {
 			fail();
 		}
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("myspace");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("myspace");
 		assertNotNull(socialNetwork);		
 	}
 	

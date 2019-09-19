@@ -7,7 +7,7 @@ import com.tone.model.SocialNetworkEntity;
 
 public interface SocialNetworkService extends BaseService<SocialNetworkEntity, Long>{
 
-	SocialNetworkEntity findOptionalByName(String name);
+	SocialNetworkEntity findByName(String name);
 
 	Set<SocialNetworkEntity> findActive();
 	

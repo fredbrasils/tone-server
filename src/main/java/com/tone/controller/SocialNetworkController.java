@@ -104,7 +104,7 @@ public class SocialNetworkController extends BaseController{
 	  
     	log.debug("socialNetworkController:findSocialNetworkByName");
     		     
-	   SocialNetworkEntity socialNetworkEntity = socialNetworkService.findOptionalByName(name);
+	   SocialNetworkEntity socialNetworkEntity = socialNetworkService.findByName(name);
 	    
 	   if(socialNetworkEntity != null) {
 		   SocialNetwork socialNetwork = (SocialNetwork) Utils.convertFromTo(socialNetworkEntity, SocialNetwork.class);
