@@ -24,6 +24,14 @@ public class ConstantsMessages {
 	public static final String MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER = "msg.error.socialnetwork.delete.bound.luthier";
 	public static final String MSG_ERROR_SOCIAL_NETWORK_DELETE = "msg.error.socialnetwork.delete";
 	
+	// FEATURE
+	public static final String MSG_ERROR_FEATURE_EXIST = "msg.error.feature.exist";
+	public static final String NOTBLANK_FEATURE_ID = "NotBlank.feature.id";
+	public static final String MSG_ERROR_FEATURE_NOTFOUND = "msg.error.feature.notfound";
+	public static final String MSG_ERROR_FEATURE_SAVE = "msg.error.feature.save";
+	public static final String MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER = "msg.error.feature.delete.bound.luthier";
+	public static final String MSG_ERROR_FEATURE_DELETE = "msg.error.feature.delete";
+	
 	private ConstantsMessages() {
 	}
 }
