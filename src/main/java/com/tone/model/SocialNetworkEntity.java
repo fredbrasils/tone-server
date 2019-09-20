@@ -3,12 +3,10 @@ package com.tone.model;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-import com.tone.model.enumm.SocialNetworkTypeEnum;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
@@ -32,21 +30,16 @@ public class SocialNetworkEntity extends BaseEntity{
 	private static final long serialVersionUID = 1L;
 	
 	@Builder
-	public SocialNetworkEntity(Long id, SocialNetworkTypeEnum type, String link) {
+	public SocialNetworkEntity(Long id, StatusEnum status, String name) {
 		super(id);
-		this.type = type;
-		this.link = link;
+		this.status = status;
+		this.name = name;
 	}
 
-	@Enumerated(EnumType.STRING)
-	private SocialNetworkTypeEnum type;
+	@Enumerated(EnumType.ORDINAL)
+	private StatusEnum status;
 	
-	private String link;
-	
-	@EqualsAndHashCode.Exclude
 	@NotBlank
-	@ManyToOne
-	@JoinColumn(name = "luthier_id")
-	private LuthierEntity luthier;	
+	private String name;
 	
 }
