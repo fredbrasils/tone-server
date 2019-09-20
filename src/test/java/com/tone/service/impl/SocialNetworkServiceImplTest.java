@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.tone.exception.BusinessException;
 import com.tone.model.SocialNetworkEntity;
 import com.tone.model.LuthierEntity;
+import com.tone.model.LuthierSocialNetworkEntity;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.service.SocialNetworkService;
 import com.tone.service.LuthierService;
@@ -40,7 +42,7 @@ class SocialNetworkServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		
-		//LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
+		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
 		
 		SocialNetworkEntity socialNetwork1 = SocialNetworkEntity.builder().name("Instagram").status(StatusEnum.ACTIVE).build();
 		SocialNetworkEntity socialNetwork2 = SocialNetworkEntity.builder().name("Facebook").status(StatusEnum.ACTIVE).build();
@@ -53,8 +55,9 @@ class SocialNetworkServiceImplTest {
 			socialNetwork3 = socialNetworkService.save(socialNetwork3);
 			socialNetwork4 = socialNetworkService.save(socialNetwork4);
 			
-			/*luthier.addSocialNetwork(socialNetwork3);
-			luthierService.save(luthier);*/
+			luthier.addSocialNetwork(socialNetwork2, "facebook.com/luthier1");
+			luthier = luthierService.save(luthier);		
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -62,6 +65,14 @@ class SocialNetworkServiceImplTest {
 	
 	@AfterEach
 	void close() {
+		
+		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
+		luthiers.stream().forEach(lut -> {
+			try {
+				luthierService.delete(lut);
+			} catch (BusinessException e) {
+			}
+		});
 		
 		Set<SocialNetworkEntity> socialNetworks = socialNetworkService.findAll().orElse(null);
 		socialNetworks.stream().forEach(lut -> {
@@ -244,12 +255,12 @@ class SocialNetworkServiceImplTest {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_NOTFOUND);
 		}		
 	}
-	/*
+	
 	@DisplayName("Delete an socialNetwork")
 	@Test
 	void shouldDeleteSocialNetwork() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 1");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
 		
 		try {
 			socialNetworkService.delete(socialNetwork);
@@ -257,14 +268,14 @@ class SocialNetworkServiceImplTest {
 			fail();
 		}
 		
-		assertNull(socialNetworkService.findOptionalByName("SocialNetwork 1"));
+		assertNull(socialNetworkService.findByName("instagram"));
 	}
 	
 	@DisplayName("Cant delete an socialNetwork with luthier")
 	@Test
 	void shouldntDeleteSocialNetwork() {		
 		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findOptionalByName("SocialNetwork 3");
+		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("facebook");
 		
 		try {
 			socialNetworkService.delete(socialNetwork);
@@ -273,7 +284,7 @@ class SocialNetworkServiceImplTest {
 			assertEquals(e.getMessage(), MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER);
 		}
 		
-		assertNotNull(socialNetworkService.findOptionalByName("SocialNetwork 3"));
+		assertNotNull(socialNetworkService.findByName("facebook"));
 	}
 	
 	@DisplayName("Cant delete an socialNetwork without id")
@@ -289,5 +300,5 @@ class SocialNetworkServiceImplTest {
 			assertEquals(e.getMessage(), MSG_ERROR_SOCIAL_NETWORK_NOTFOUND);
 		}
 	}
-	*/
+	
 }

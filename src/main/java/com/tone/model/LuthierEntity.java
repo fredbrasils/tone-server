@@ -86,4 +86,23 @@ public class LuthierEntity extends BaseEntity{
 		this.instruments.add(instrument);
 	}
 	
+	public void addSocialNetwork(SocialNetworkEntity socialNetwork, String link) {
+		
+		if(this.socialNetworks == null) {
+			this.socialNetworks = new HashSet<LuthierSocialNetworkEntity>();
+		}
+		
+		LuthierSocialNetworkEntity ls = new LuthierSocialNetworkEntity(link, socialNetwork, this);		
+		this.socialNetworks.add(ls);
+	}
+	
+	public void addSocialNetwork(LuthierSocialNetworkEntity socialNetwork) {
+		
+		if(this.socialNetworks == null) {
+			this.socialNetworks = new HashSet<LuthierSocialNetworkEntity>();
+		}
+		
+		this.socialNetworks.add(socialNetwork);
+	}
+
 }

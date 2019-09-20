@@ -40,13 +40,11 @@ public class LuthierSocialNetworkEntity extends BaseEntity{
 	private String link;
 
 	@EqualsAndHashCode.Exclude
-	@NotBlank
 	@ManyToOne
 	@JoinColumn(name = "social_network_id")
 	private SocialNetworkEntity socialNetwork;
 	
 	@EqualsAndHashCode.Exclude
-	@NotBlank
 	@ManyToOne
 	@JoinColumn(name = "luthier_id")
 	private LuthierEntity luthier;	

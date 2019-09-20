@@ -439,12 +439,12 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
 
         verify(socialNetworkService).inactive(ArgumentMatchers.any());
     }
-    /*
+    
     @DisplayName(value="Delete socialNetwork")
     @Test
     void deleteSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").build();
     	
         mockMvc.perform(delete("/api/socialNetwork")
         		.accept(MediaType.APPLICATION_JSON)
@@ -460,7 +460,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteSocialNetworkWithoutId() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().name("guitar").build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().name("instagram").build();
     	
         mockMvc.perform(delete("/api/socialNetwork")
         		.accept(MediaType.APPLICATION_JSON)
@@ -494,7 +494,7 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteSocialNetwork() throws Exception {
     	
-    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("guitar").build();
+    	SocialNetwork socialNetwork = SocialNetwork.builder().id(1l).name("instagram").build();
     	
     	Mockito.doThrow(BusinessException.class).when(socialNetworkService).delete(ArgumentMatchers.any(SocialNetworkEntity.class));
     	
@@ -513,9 +513,9 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void deleteListOfSocialNetworks() throws Exception {
     	
-    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("guitar").build();
-    	SocialNetwork socialNetwork2 = SocialNetwork.builder().id(2l).name("drum").build();
-    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("bass").build();
+    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("instagram").build();
+    	SocialNetwork socialNetwork2 = SocialNetwork.builder().id(2l).name("facebook").build();
+    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("other").build();
     	List<SocialNetwork> list = new ArrayList<SocialNetwork>();
     	list.add(socialNetwork1);list.add(socialNetwork2);list.add(socialNetwork3);
     	
@@ -533,9 +533,9 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteListOfSocialNetworksWithoutId() throws Exception {
     	
-    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("guitar").build();
-    	SocialNetwork socialNetwork2 = SocialNetwork.builder().name("drum").build();
-    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("bass").build();
+    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("instagram").build();
+    	SocialNetwork socialNetwork2 = SocialNetwork.builder().name("facebook").build();
+    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("other").build();
     	List<SocialNetwork> list = new ArrayList<SocialNetwork>();
     	list.add(socialNetwork1);list.add(socialNetwork2);list.add(socialNetwork3);
     	
@@ -554,9 +554,9 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteListOfSocialNetworks() throws Exception {
     	
-    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("guitar").build();
-    	SocialNetwork socialNetwork2 = SocialNetwork.builder().id(2l).name("drum").build();
-    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("bass").build();
+    	SocialNetwork socialNetwork1 = SocialNetwork.builder().id(1l).name("instagram").build();
+    	SocialNetwork socialNetwork2 = SocialNetwork.builder().id(2l).name("facebook").build();
+    	SocialNetwork socialNetwork3 = SocialNetwork.builder().id(3l).name("other").build();
     	List<SocialNetwork> list = new ArrayList<SocialNetwork>();
     	list.add(socialNetwork1);list.add(socialNetwork2);list.add(socialNetwork3);
     	
@@ -572,5 +572,5 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
 
         verify(socialNetworkService, times(1)).delete(ArgumentMatchers.any());
     }
-    */
+    
 }

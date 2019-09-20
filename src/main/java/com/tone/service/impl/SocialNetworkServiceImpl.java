@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.tone.exception.BusinessException;
 import com.tone.model.SocialNetworkEntity;
 import com.tone.model.enumm.StatusEnum;
+import com.tone.repository.LuthierSocialNetworkRepository;
 import com.tone.repository.SocialNetworkRepository;
 import com.tone.service.SocialNetworkService;
 
@@ -24,13 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntity,Long> implements SocialNetworkService{
 	
-	private SocialNetworkRepository socialNetworkRepository;	
+	private SocialNetworkRepository socialNetworkRepository;
+	private LuthierSocialNetworkRepository luthierSocialNetworkRepository;
 	
-	public SocialNetworkServiceImpl(SocialNetworkRepository socialNetworkRepository) {
+	public SocialNetworkServiceImpl(SocialNetworkRepository socialNetworkRepository, LuthierSocialNetworkRepository luthierSocialNetworkRepository) {
 		super(socialNetworkRepository);
 		this.socialNetworkRepository = socialNetworkRepository;
+		this.luthierSocialNetworkRepository = luthierSocialNetworkRepository;
 	}
-
 	
 	/**
 	 * @param entity SocialNetwork that will be save
@@ -125,14 +127,14 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	 * @return
 	 * @throws BusinessException 
 	 */
-	/*@Override
+	@Override
 	public void delete(SocialNetworkEntity socialNetwork) throws BusinessException {
 		
 		Optional<SocialNetworkEntity> socialNetworkSaved = findById(socialNetwork.getId());
 		
 		if(socialNetworkSaved.isPresent()) {
-			
-			if(!socialNetworkSaved.get().getLuthiers().isEmpty()) {
+		
+			if(!luthierSocialNetworkRepository.findAllOptionalBySocialNetwork(socialNetwork).isEmpty()) {
 				throw new BusinessException(MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER);
 			}
 			
@@ -146,5 +148,5 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 			throw new BusinessException(MSG_ERROR_SOCIAL_NETWORK_NOTFOUND);
 		}
 		
-	}*/
+	}
 }
