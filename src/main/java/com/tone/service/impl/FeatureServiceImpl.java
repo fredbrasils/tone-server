@@ -1,13 +1,15 @@
 package com.tone.service.impl;
 
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_EXIST;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_SAVE;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_EXIST;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -40,12 +42,28 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	public FeatureEntity save(FeatureEntity entity) throws BusinessException {
 
 		log.info("Save feature");
-		FeatureEntity feature = this.findByName(entity.getName());
+		Optional<List<FeatureEntity>> features = this.findByName(entity.getName());		
 		
+		if(features.isPresent()) {
+			
+			Predicate<FeatureEntity> predicate = f -> f.getId() != entity.getId() 
+					&& ( (f.getRoot() != null && entity.getRoot() != null 
+					&& f.getRoot().getId() == entity.getRoot().getId())
+							|| f.getRoot() == entity.getRoot());		
+			
+			if(features.get().stream().findFirst().filter(predicate).isPresent()) {
+				throw new BusinessException(MSG_ERROR_FEATURE_EXIST);				
+			}
+		}
+		
+		/*
 		if(feature != null && feature.getId() != entity.getId() 
-				&& feature.getRoot() == entity.getRoot()) {
+				&& ( (feature.getRoot() != null && entity.getRoot() != null 
+					   && feature.getRoot().getId() == entity.getRoot().getId())
+				   || feature.getRoot() == entity.getRoot())) {
 			throw new BusinessException(MSG_ERROR_FEATURE_EXIST);
 		}
+		*/
 		
 		return super.save(entity);
 	}
@@ -56,8 +74,8 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	 * 
 	 */
 	@Override
-	public FeatureEntity findByName(String name) {
-		return this.featureRepository.findOptionalByNameIgnoreCase(name).orElse(null);
+	public Optional<List<FeatureEntity>> findByName(String name) {
+		return this.featureRepository.findOptionalByNameContainingIgnoreCase(name);
 	}	
 
 	/**

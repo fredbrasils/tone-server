@@ -47,7 +47,7 @@ public class FeatureController extends BaseController{
      * @param request
      * @return Return all features
      */
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
 	@GetMapping
 	public ResponseEntity<?> findFeatures(HttpServletRequest request) {
 	  
@@ -59,12 +59,12 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+    */
     /**
      * @param request
      * @return Return all features actived
      */
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     @GetMapping("/active")
 	public ResponseEntity<?> findFeatureActive(HttpServletRequest request) {
 	  
@@ -76,12 +76,12 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
-    
+    */
     /**
      * @param request
      * @return Return all features inactived
      */
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     @GetMapping("/inactive")
 	public ResponseEntity<?> findFeatureInactive(HttpServletRequest request) {
 	  
@@ -93,13 +93,13 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
-    
+    */
     /**
      * @param name Feature's name
      * @param request
      * @return Return the feature required
      */
-    @GetMapping("/{name}")
+    /*@GetMapping("/{name}")
 	public ResponseEntity<?> findFeatureByName(@PathVariable String name, HttpServletRequest request) {
 	  
     	log.debug("featureController:findFeatureByName");
@@ -113,7 +113,7 @@ public class FeatureController extends BaseController{
 		   return messageError(request, new String[] {MSG_ERROR_FEATURE_NOTFOUND}, null);
 	   }	    
     }
-    
+    */
     /**
      * Save feature
      * @param feature Feature that will be saved
@@ -152,7 +152,7 @@ public class FeatureController extends BaseController{
      * @param errors
      * @return return feature updated
      */
-    @PutMapping
+    /*@PutMapping
     public ResponseEntity<GenericResponse> updatefeature(@Valid @RequestBody Feature feature, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
@@ -179,7 +179,7 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+    */
     /**
      * 
      * @param feature Feature that will be deleted
@@ -188,7 +188,7 @@ public class FeatureController extends BaseController{
      * @param errors
      * @return 
      */
-    @DeleteMapping
+    /*@DeleteMapping
     public ResponseEntity<GenericResponse> deleteFeature(@Valid @RequestBody Feature feature, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
@@ -213,14 +213,14 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+    */
     /**
      * 
      * @param listFeature Features that will be deleted
      * @param request
      * @return
      */
-    @DeleteMapping("/list")
+    /*@DeleteMapping("/list")
     public ResponseEntity<GenericResponse> deleteAllFeature(@RequestBody List<Feature> listFeature,
 			HttpServletRequest request) {    	
     	    
@@ -245,14 +245,14 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+    */
     /**
      * 
      * @param feature Feature that will be actived
      * @param request
      * @return return feature actived
      */
-    @PutMapping("/active")
+    /*@PutMapping("/active")
     public ResponseEntity<GenericResponse> active(@RequestBody Feature feature, HttpServletRequest request) {
     	
     	Feature featureSaved = null;
@@ -271,14 +271,14 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+    */
     /**
      * 
      * @param feature Feature that will be inactived
      * @param request
      * @return return feature inactived
      */
-    @PutMapping("/inactive")
+    /*@PutMapping("/inactive")
     public ResponseEntity<GenericResponse> inactive(@RequestBody Feature feature, HttpServletRequest request) {
     	
     	Feature featureSaved = null;
@@ -297,4 +297,5 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
+    */
 }

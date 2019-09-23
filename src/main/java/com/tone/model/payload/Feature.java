@@ -34,7 +34,9 @@ public class Feature implements Serializable{
 
 	private FeatureTypeEnum type;	
 	
+	@EqualsAndHashCode.Exclude
 	private StatusEnum status;
 	
+	@EqualsAndHashCode.Exclude
 	private Set<LuthierFeature> features;
 }

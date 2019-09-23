@@ -67,6 +67,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
                 .build();
     }    
     
+    /*
     @DisplayName(value="Find all features active.") 
     @Test
     void findAllFeaturesActive() throws Exception {
@@ -189,12 +190,14 @@ class FeatureControllerTest extends AbstractRestControllerTest{
                 ;
     }
     
+    */
+    
     @DisplayName(value="Create a new feature")
     @Test
     void registerFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().name("Instagram").status(StatusEnum.ACTIVE).build();
-    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("Instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().name("style").status(StatusEnum.ACTIVE).build();
+    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
     	
     	when(featureService.save(ArgumentMatchers.any(FeatureEntity.class))).thenReturn(featureEntity);
 
@@ -233,7 +236,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void dontRegisterTheSameFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().name("Instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().name("style").status(StatusEnum.ACTIVE).build();
     	
     	when(featureService.save(ArgumentMatchers.any(FeatureEntity.class))).thenThrow(BusinessException.class);    	
 
@@ -248,6 +251,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
     }
     
+    /*
     @DisplayName(value="Update feature")
     @Test
     void updateFeature() throws Exception {
@@ -572,5 +576,5 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
         verify(featureService, times(1)).delete(ArgumentMatchers.any());
     }
-    
+    */
 }

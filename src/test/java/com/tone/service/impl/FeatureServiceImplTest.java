@@ -1,10 +1,13 @@
 package com.tone.service.impl;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +26,7 @@ import com.tone.model.enumm.FeatureTypeEnum;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.service.FeatureService;
 import com.tone.service.LuthierService;
+import com.tone.utils.ConstantsMessages;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -139,8 +143,8 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		FeatureEntity feature = featureService.findByName("finishes");
-		assertNotNull(feature);		
+		Optional<List<FeatureEntity>> feature = featureService.findByName("finishes");
+		assertTrue(feature.isPresent());		
 	}
 	
 	@DisplayName("Save feature")
@@ -158,26 +162,80 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		FeatureEntity featureRoot = featureService.findByName("finishes");
-		assertNotNull(featureRoot);
-		assertNotNull(featureRoot.getFeatures());
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("finishes");
+		assertTrue(featureRoot.isPresent());
+		assertNotNull(featureRoot.get().get(0).getFeatures());
 		
 	}
 	
-	/*
-	@DisplayName("Cant save an feature with an exists name")
+	@DisplayName("Save feature with an existing group's name")
 	@Test
-	void cantSave() {
+	void saveFeatureWithSameNameOfAGroupe() {
 		
-		FeatureEntity feature2 = FeatureEntity.builder().name("insTagram").build();
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("style");
+		FeatureEntity feature = FeatureEntity.builder().name("price").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
+		feature.setRoot(featureRoot.get().get(0));
+		
 		try {
-			featureService.save(feature2);
-			fail("Fail: Saved an feature with an exists name");
-		}catch (BusinessException e) {
+			featureService.save(feature);			
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		featureRoot = featureService.findByName("style");
+		assertTrue(featureRoot.isPresent());
+		assertNotNull(featureRoot.get().get(0).getFeatures());
+	}
+	
+	@DisplayName("Save feature root with an existing feature's name child")
+	@Test
+	void saveFeatureRootWithSameNameOfAChild() {
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("style");
+		FeatureEntity feature = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
+		feature.setRoot(featureRoot.get().get(0));
+		
+		try {
+			featureService.save(feature);			
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		featureRoot = featureService.findByName("style");
+		assertTrue(featureRoot.isPresent());
+		assertNotNull(featureRoot.get().get(0).getFeatures());
+	}
+	
+	@DisplayName("Cant save feature root with an existing name")
+	@Test
+	void shouldntSaveFeatureRootWithAnExistingName() {
+		
+		FeatureEntity feature4 = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
+		
+		try {
+			featureService.save(feature4);			
+			fail();
+		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_FEATURE_EXIST);
 		}
 	}
-	*/
+	
+	@DisplayName("Cant save feature with an existing name")
+	@Test
+	void shouldntSaveFeatureWithAnExistingName() {
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("price");		
+		FeatureEntity feature = FeatureEntity.builder().name("0-100").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		feature.setRoot(featureRoot.get().get(0));
+		
+		try {
+			featureService.save(feature);			
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_FEATURE_EXIST);
+		}
+	}
+	
 	/*
 	@DisplayName("Update feature")
 	@Test

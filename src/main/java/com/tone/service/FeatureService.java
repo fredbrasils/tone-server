@@ -1,5 +1,7 @@
 package com.tone.service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.tone.exception.BusinessException;
@@ -7,7 +9,7 @@ import com.tone.model.FeatureEntity;
 
 public interface FeatureService extends BaseService<FeatureEntity, Long>{
 
-	FeatureEntity findByName(String name);
+	Optional<List<FeatureEntity>> findByName(String name);
 
 	Set<FeatureEntity> findActive();
 	

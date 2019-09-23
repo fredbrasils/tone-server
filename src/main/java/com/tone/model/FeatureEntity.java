@@ -65,6 +65,7 @@ public class FeatureEntity extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private FeatureTypeEnum type;	
 	
+	@EqualsAndHashCode.Exclude
 	@Enumerated(EnumType.ORDINAL)
 	private StatusEnum status;
 	

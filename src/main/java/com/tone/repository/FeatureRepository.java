@@ -11,7 +11,7 @@ import com.tone.model.enumm.StatusEnum;
 
 public interface FeatureRepository extends PagingAndSortingRepository<FeatureEntity, Long> {
 
-	Optional<FeatureEntity> findOptionalByNameIgnoreCase(String name);
+	Optional<List<FeatureEntity>> findOptionalByNameContainingIgnoreCase(String name);
 	
 	Optional<List<FeatureEntity>> findAllOptionalByStatus(StatusEnum status);
 	
