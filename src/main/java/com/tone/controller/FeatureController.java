@@ -1,9 +1,10 @@
 package com.tone.controller;
 
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
-import static com.tone.utils.ConstantsMessages.NOTBLANK_FEATURE_ID;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,19 +13,17 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.FeatureEntity;
-import com.tone.model.payload.GenericResponse;
 import com.tone.model.payload.Feature;
+import com.tone.model.payload.GenericResponse;
 import com.tone.service.FeatureService;
 import com.tone.utils.ConstantsMessages;
 import com.tone.utils.Utils;
@@ -47,7 +46,7 @@ public class FeatureController extends BaseController{
      * @param request
      * @return Return all features
      */
-    /*@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	@GetMapping
 	public ResponseEntity<?> findFeatures(HttpServletRequest request) {
 	  
@@ -59,12 +58,12 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
     /**
      * @param request
      * @return Return all features actived
      */
-    /*@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @GetMapping("/active")
 	public ResponseEntity<?> findFeatureActive(HttpServletRequest request) {
 	  
@@ -76,12 +75,12 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
-    */
+    
     /**
      * @param request
      * @return Return all features inactived
      */
-    /*@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @GetMapping("/inactive")
 	public ResponseEntity<?> findFeatureInactive(HttpServletRequest request) {
 	  
@@ -93,27 +92,34 @@ public class FeatureController extends BaseController{
 	    
         return ResponseEntity.ok(messageSuccess(listFeatures, request, new String[] {ConstantsMessages.SUCCESS}, null));	    
     }
-    */
+    
     /**
      * @param name Feature's name
      * @param request
      * @return Return the feature required
      */
-    /*@GetMapping("/{name}")
+    @GetMapping("/{name}")
 	public ResponseEntity<?> findFeatureByName(@PathVariable String name, HttpServletRequest request) {
 	  
     	log.debug("featureController:findFeatureByName");
     		     
-	   FeatureEntity featureEntity = featureService.findByName(name);
+    	Optional<List<FeatureEntity>> featureEntity = featureService.findByName(name);
 	    
-	   if(featureEntity != null) {
-		   Feature feature = (Feature) Utils.convertFromTo(featureEntity, Feature.class);
-		   return ResponseEntity.ok(messageSuccess(feature, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	   if(featureEntity.isPresent()) {
+		   List<FeatureEntity> list = featureEntity.get();
+		   List<Feature> listFeature = new ArrayList<Feature>();
+		   
+		   for(FeatureEntity entity : list) {
+			   listFeature.add((Feature) Utils.convertFromTo(entity, Feature.class));
+		   }	   
+		   
+		   return ResponseEntity.ok(messageSuccess(listFeature, request, new String[] {ConstantsMessages.SUCCESS}, null));
+		   
 	   }else {
 		   return messageError(request, new String[] {MSG_ERROR_FEATURE_NOTFOUND}, null);
 	   }	    
     }
-    */
+    
     /**
      * Save feature
      * @param feature Feature that will be saved

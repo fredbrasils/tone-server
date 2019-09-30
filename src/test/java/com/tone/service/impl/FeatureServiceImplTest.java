@@ -44,7 +44,7 @@ class FeatureServiceImplTest {
 		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
 		
 		FeatureEntity feature1 = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
-		FeatureEntity feature2 = FeatureEntity.builder().name("body materials").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.STRING).build();
+		FeatureEntity feature2 = FeatureEntity.builder().name("body materials").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.STRING).build();
 		FeatureEntity feature3 = FeatureEntity.builder().name("price").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
 		FeatureEntity feature4 = FeatureEntity.builder().name("0-100").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
 		
@@ -88,7 +88,7 @@ class FeatureServiceImplTest {
 			}
 		});
 	}
-	/*
+	
 	@DisplayName("Find all feature")
 	@Test
 	void findAll() {
@@ -96,23 +96,23 @@ class FeatureServiceImplTest {
 		Set<FeatureEntity> features = featureService.findAll().orElse(null);
 		
 		assertNotNull(features);
-		assertEquals(4, features.size());
+		assertEquals(3, features.size());
 	}
 
 	@DisplayName("Find feature by name")
 	@Test
 	void findByName() {
 		
-		FeatureEntity feature = featureService.findByName("instagram");
-		assertNotNull(feature);		
+		Optional<List<FeatureEntity>> feature = featureService.findByName("style");
+		assertNotNull(feature.get());		
 	}
 	
 	@DisplayName("Not Found feature by name")
 	@Test
-	void notfoundFeatureByName() {
+	void notFoundFeatureByName() {
 		
-		FeatureEntity feature = featureService.findByName("myspace");
-		assertNull(feature);		
+		Optional<List<FeatureEntity>>  feature = featureService.findByName("guitar");
+		assertTrue(feature.isEmpty());
 	}
 	
 	@DisplayName("Find feature active")
@@ -120,7 +120,7 @@ class FeatureServiceImplTest {
 	void findAllFeatureActive() {
 		
 		Set<FeatureEntity> feature = featureService.findActive();
-		assertEquals(2,feature.size());		
+		assertEquals(3,feature.size());		
 	}
 	
 	@DisplayName("Find feature inactive")
@@ -128,9 +128,9 @@ class FeatureServiceImplTest {
 	void findAllFeatureInactive() {
 		
 		Set<FeatureEntity> feature = featureService.findInactive();
-		assertEquals(2,feature.size());		
+		assertEquals(1,feature.size());		
 	}
-	*/
+	
 	@DisplayName("Save feature root")
 	@Test
 	void saveFeatureRoot() {
