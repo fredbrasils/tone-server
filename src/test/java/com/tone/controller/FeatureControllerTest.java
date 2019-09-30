@@ -5,10 +5,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,27 +50,31 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Mock
     MessageSource messages;
     
-    List<FeatureEntity> features;
-
+    List<FeatureEntity> featuresActive;
+    List<FeatureEntity> featuresInactive;
+    
     MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-    	features = new ArrayList<FeatureEntity>();
-    	features.add(FeatureEntity.builder().id(1l).name("Instagram").status(StatusEnum.ACTIVE).build());
-    	features.add(FeatureEntity.builder().id(2l).name("Facebook").status(StatusEnum.ACTIVE).build());
-
+    	featuresActive = new ArrayList<FeatureEntity>();
+    	featuresActive.add(FeatureEntity.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build());
+    	featuresActive.add(FeatureEntity.builder().id(2l).name("material").status(StatusEnum.ACTIVE).build());
+    	
+    	featuresInactive = new ArrayList<FeatureEntity>();
+    	featuresInactive.add(FeatureEntity.builder().id(3l).name("price").status(StatusEnum.INACTIVE).build());
+    	
         mockMvc = MockMvcBuilders
                 .standaloneSetup(featureController)
                 .build();
     }    
     
-    /*
+    
     @DisplayName(value="Find all features active.") 
     @Test
     void findAllFeaturesActive() throws Exception {
 		
-    	when(featureService.findActive()).thenReturn(new HashSet<>(features));    	
+    	when(featureService.findActive()).thenReturn(new HashSet<>(featuresActive));    	
     	
         mockMvc.perform(get("/api/feature/active")
         		.accept(MediaType.APPLICATION_JSON)
@@ -102,14 +104,14 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void findAllFeaturesInactive() throws Exception {
 		
-    	when(featureService.findInactive()).thenReturn(new HashSet<>(features));    	
+    	when(featureService.findInactive()).thenReturn(new HashSet<>(featuresInactive));    	
     	
         mockMvc.perform(get("/api/feature/inactive")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.object").isArray())
-                .andExpect(jsonPath("$.object", hasSize(2)))
+                .andExpect(jsonPath("$.object", hasSize(1)))
                 ;        
     }
     
@@ -132,7 +134,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void findAllFeatures() throws Exception {
 		
-    	Optional<Set<FeatureEntity>> list = Optional.of(features.stream().collect(Collectors.toSet()));
+    	Optional<Set<FeatureEntity>> list = Optional.of(featuresActive.stream().collect(Collectors.toSet()));
     	
     	when(featureService.findAll()).thenReturn(list);    	
     	
@@ -164,16 +166,20 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void findFeatureByName() throws Exception {
 		
-    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("facebook").build();
+    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("style").build();
+    	List<FeatureEntity> list = new ArrayList<FeatureEntity>();
+    	list.add(featureEntity);
     	
-    	when(featureService.findByName(Mockito.anyString())).thenReturn(featureEntity);    	
+    	Optional<List<FeatureEntity>> featureEntities = Optional.of(list);
     	
-        mockMvc.perform(get("/api/feature/facebook")
+    	when(featureService.findByName(Mockito.anyString())).thenReturn(featureEntities);    	
+    	
+        mockMvc.perform(get("/api/feature/style")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.object.name", equalTo(featureEntity.getName())))
-                .andExpect(jsonPath("$.object.id", equalTo(featureEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(1)))
                 ;        
     }
     
@@ -181,7 +187,9 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void notFoundFeatureByName() throws Exception {
 		
-    	when(featureService.findByName(Mockito.anyString())).thenReturn(null);    	
+    	Optional<List<FeatureEntity>> featureEntities = Optional.empty();
+    	
+    	when(featureService.findByName(Mockito.anyString())).thenReturn(featureEntities);    	
     	
         mockMvc.perform(get("/api/feature/myspace")
         		.accept(MediaType.APPLICATION_JSON)
@@ -189,8 +197,6 @@ class FeatureControllerTest extends AbstractRestControllerTest{
                 .andDo(print()).andExpect(status().isBadRequest())                
                 ;
     }
-    
-    */
     
     @DisplayName(value="Create a new feature")
     @Test
