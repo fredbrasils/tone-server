@@ -1,6 +1,7 @@
 package com.tone.controller;
 
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
+import static com.tone.utils.ConstantsMessages.NOTBLANK_FEATURE_ID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -158,7 +160,7 @@ public class FeatureController extends BaseController{
      * @param errors
      * @return return feature updated
      */
-    /*@PutMapping
+    @PutMapping
     public ResponseEntity<GenericResponse> updatefeature(@Valid @RequestBody Feature feature, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
@@ -185,7 +187,7 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
     /**
      * 
      * @param feature Feature that will be deleted

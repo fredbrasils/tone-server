@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -257,13 +258,12 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
     }
     
-    /*
     @DisplayName(value="Update feature")
     @Test
     void updateFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
-    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
+    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
     	
     	when(featureService.save(ArgumentMatchers.any(FeatureEntity.class))).thenReturn(featureEntity);
 
@@ -278,7 +278,6 @@ class FeatureControllerTest extends AbstractRestControllerTest{
                 ;
 
         verify(featureService).save(ArgumentMatchers.any());
-
     }
     
     @DisplayName(value="Dont Update feature without name")
@@ -302,7 +301,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void dontUpdateFeatureWithoutId() throws Exception {
     	
-    	Feature feature = Feature.builder().name("instagram").build();
+    	Feature feature = Feature.builder().name("style").build();
 
         mockMvc.perform(put("/api/feature")
         		.accept(MediaType.APPLICATION_JSON)
@@ -319,7 +318,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void dontRegisterAnExistsFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().name("instagram").id(1l).build();
+    	Feature feature = Feature.builder().name("style").id(1l).build();
     	
     	when(featureService.save(ArgumentMatchers.any(FeatureEntity.class))).thenThrow(BusinessException.class);    	
 
@@ -334,6 +333,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
     }
     
+    /*
     @DisplayName(value="Active feature")
     @Test
     void activeFeature() throws Exception {

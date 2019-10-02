@@ -41,12 +41,13 @@ class FeatureServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		
-		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
+		//LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
 		
 		FeatureEntity feature1 = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
 		FeatureEntity feature2 = FeatureEntity.builder().name("body materials").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.STRING).build();
 		FeatureEntity feature3 = FeatureEntity.builder().name("price").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
 		FeatureEntity feature4 = FeatureEntity.builder().name("0-100").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		FeatureEntity feature5 = FeatureEntity.builder().name("101-200").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.NUMBER).build();
 		
 		try {
 			feature1 = featureService.save(feature1);
@@ -55,6 +56,9 @@ class FeatureServiceImplTest {
 
 			feature4.setRoot(feature3);
 			feature4 = featureService.save(feature4);
+			
+			feature5.setRoot(feature3);
+			feature5 = featureService.save(feature5);
 			
 			/*
 			luthier.addFeature(feature2, "facebook.com/luthier1");
@@ -128,7 +132,7 @@ class FeatureServiceImplTest {
 	void findAllFeatureInactive() {
 		
 		Set<FeatureEntity> feature = featureService.findInactive();
-		assertEquals(1,feature.size());		
+		assertEquals(2,feature.size());		
 	}
 	
 	@DisplayName("Save feature root")
@@ -236,29 +240,53 @@ class FeatureServiceImplTest {
 		}
 	}
 	
-	/*
-	@DisplayName("Update feature")
+	@DisplayName("Update root feature")
 	@Test
-	void update() {		
+	void updateRootFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("instagram");
-		feature.setName("myspace");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("style");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("nitro");
+		
 		try {
 			featureService.save(feature);
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNull(featureService.findByName("instagram"));
-		assertNotNull(featureService.findByName("myspace"));
+		featureRoot = featureService.findByName("nitro");
+		
+		assertTrue(featureRoot.isPresent());
 	}
 	
-	@DisplayName("Cant update an feature with an exists name")
+	@DisplayName("Update feature")
 	@Test
-	void shouldntUpdateWithExistsName() {		
+	void updateFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("instagram");
-		feature.setName("facebook");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("style");
+		
+		try {
+			featureService.save(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		featureRoot = featureService.findByName("style");
+		
+		assertTrue(featureRoot.isPresent());
+		assertEquals(2, featureRoot.get().size());
+	}
+	
+	@DisplayName("Cant update an feature root with an exists name")
+	@Test
+	void shouldntUpdateFeatureRootWithExistsName() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("price");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("style");
+		
 		try {
 			featureService.save(feature);
 			fail();
@@ -267,21 +295,57 @@ class FeatureServiceImplTest {
 		}
 	}
 	
-	@DisplayName("Update an feature with the same name")
+	@DisplayName("Cant update an feature with an exists name")
 	@Test
-	void shouldUpdateWithSameName() {		
+	void shouldntUpdateFeatureWithExistsName() {		
 		
-		FeatureEntity feature = featureService.findByName("instagram");
-		feature.setName("instagram");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("101-200");
+		
+		try {
+			featureService.save(feature);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_FEATURE_EXIST);
+		}
+	}
+	
+	@DisplayName("Update an feature root with the same name")
+	@Test
+	void shouldUpdateFeatureRootWithSameName() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("style");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("style");
+		
 		try {
 			featureService.save(feature);
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNotNull(featureService.findByName("instagram"));
+		assertTrue(featureService.findByName("style").isPresent());
 	}
 	
+	@DisplayName("Update an feature with the same name")
+	@Test
+	void shouldUpdateFeatureWithSameName() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setName("0-100");
+		
+		try {
+			featureService.save(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		assertTrue(featureService.findByName("0-100").isPresent());
+	}
+	
+	/*
 	@DisplayName("Active an feature")
 	@Test
 	void shouldActiveFeature() {		
