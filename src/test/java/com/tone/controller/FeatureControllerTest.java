@@ -333,13 +333,12 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
     }
     
-    /*
     @DisplayName(value="Active feature")
     @Test
     void activeFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
-    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().id(1l).name("style").status(StatusEnum.INACTIVE).build();
+    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
     	
     	when(featureService.active(ArgumentMatchers.any(FeatureEntity.class))).thenReturn(featureEntity);
 
@@ -360,8 +359,8 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void inactiveFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
-    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
+    	Feature feature = Feature.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
+    	FeatureEntity featureEntity = FeatureEntity.builder().id(1l).name("style").status(StatusEnum.INACTIVE).build();
     	
     	when(featureService.inactive(ArgumentMatchers.any(FeatureEntity.class))).thenReturn(featureEntity);
 
@@ -382,7 +381,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntActiveFeatureThatDoesntExist() throws Exception {
     	
-    	Feature feature = Feature.builder().name("instagram").status(StatusEnum.INACTIVE).build();
+    	Feature feature = Feature.builder().name("xyz").status(StatusEnum.INACTIVE).build();
     	
         mockMvc.perform(put("/api/feature/active")
         		.accept(MediaType.APPLICATION_JSON)
@@ -399,7 +398,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntInactiveFeatureThatDoesntExist() throws Exception {
     	
-    	Feature feature = Feature.builder().name("instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().name("zyx").status(StatusEnum.ACTIVE).build();
     	
         mockMvc.perform(put("/api/feature/inactive")
         		.accept(MediaType.APPLICATION_JSON)
@@ -416,7 +415,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldTrowExceptionActiveFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").status(StatusEnum.INACTIVE).build();
+    	Feature feature = Feature.builder().id(1l).name("style").status(StatusEnum.INACTIVE).build();
     	
     	when(featureService.active(ArgumentMatchers.any(FeatureEntity.class))).thenThrow(BusinessException.class);
     	
@@ -435,7 +434,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldTrowExceptionInactiveFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").status(StatusEnum.ACTIVE).build();
+    	Feature feature = Feature.builder().id(1l).name("style").status(StatusEnum.ACTIVE).build();
     	
     	when(featureService.inactive(ArgumentMatchers.any(FeatureEntity.class))).thenThrow(BusinessException.class);
     	
@@ -449,7 +448,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
         verify(featureService).inactive(ArgumentMatchers.any());
     }
-    
+    /*
     @DisplayName(value="Delete feature")
     @Test
     void deleteFeature() throws Exception {

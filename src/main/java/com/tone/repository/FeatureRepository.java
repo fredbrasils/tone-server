@@ -3,6 +3,7 @@ package com.tone.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -11,6 +12,7 @@ import com.tone.model.enumm.StatusEnum;
 
 public interface FeatureRepository extends PagingAndSortingRepository<FeatureEntity, Long> {
 
+	@EntityGraph(attributePaths = { "features" })
 	Optional<List<FeatureEntity>> findOptionalByNameContainingIgnoreCase(String name);
 	
 	Optional<List<FeatureEntity>> findAllOptionalByStatus(StatusEnum status);

@@ -260,7 +260,7 @@ public class FeatureController extends BaseController{
      * @param request
      * @return return feature actived
      */
-    /*@PutMapping("/active")
+    @PutMapping("/active")
     public ResponseEntity<GenericResponse> active(@RequestBody Feature feature, HttpServletRequest request) {
     	
     	Feature featureSaved = null;
@@ -279,14 +279,14 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
     /**
      * 
      * @param feature Feature that will be inactived
      * @param request
      * @return return feature inactived
      */
-    /*@PutMapping("/inactive")
+    @PutMapping("/inactive")
     public ResponseEntity<GenericResponse> inactive(@RequestBody Feature feature, HttpServletRequest request) {
     	
     	Feature featureSaved = null;
@@ -305,5 +305,5 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
 }
