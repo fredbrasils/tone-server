@@ -345,12 +345,12 @@ class FeatureServiceImplTest {
 		assertTrue(featureService.findByName("0-100").isPresent());
 	}
 	
-	/*
 	@DisplayName("Active an feature")
 	@Test
 	void shouldActiveFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("Website");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("body materials");
+		FeatureEntity feature = featureRoot.get().get(0);
 		
 		try {
 			featureService.active(feature);
@@ -358,14 +358,17 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.ACTIVE, featureService.findByName("Website").getStatus());
+		featureRoot = featureService.findByName("body materials");
+		feature = featureRoot.get().get(0);
+		assertEquals(StatusEnum.ACTIVE, feature.getStatus());
 	}
 	
 	@DisplayName("Inactive an feature")
 	@Test
 	void shouldInactiveFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("facebook");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		FeatureEntity feature = featureRoot.get().get(0);
 		
 		try {
 			featureService.inactive(feature);
@@ -373,7 +376,9 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.INACTIVE, featureService.findByName("facebook").getStatus());
+		featureRoot = featureService.findByName("0-100");
+		feature = featureRoot.get().get(0);
+		assertEquals(StatusEnum.INACTIVE, feature.getStatus());
 	}
 	
 	@DisplayName("Dont actived an feature that doesn exist")
@@ -404,6 +409,51 @@ class FeatureServiceImplTest {
 		}		
 	}
 	
+	@DisplayName("Active an feature root active feature child")
+	@Test
+	void shouldActiveFeatureChilds() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("price");
+		FeatureEntity feature = featureRoot.get().get(0);
+		
+		try {
+			featureService.active(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		featureRoot = featureService.findByName("price");
+		feature = featureRoot.get().get(0);
+		assertEquals(StatusEnum.ACTIVE, feature.getStatus());
+		
+		feature.getFeatures().forEach( fea -> {			
+			assertEquals(StatusEnum.ACTIVE, fea.getStatus());			
+		});
+	}
+	
+	@DisplayName("Inactive an feature root inactive feature child")
+	@Test
+	void shouldInactiveFeatureChilds() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("price");
+		FeatureEntity feature = featureRoot.get().get(0);
+		
+		try {
+			featureService.inactive(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		featureRoot = featureService.findByName("price");
+		feature = featureRoot.get().get(0);
+		assertEquals(StatusEnum.INACTIVE, feature.getStatus());
+		
+		feature.getFeatures().forEach( fea -> {			
+			assertEquals(StatusEnum.INACTIVE, fea.getStatus());			
+		});
+	}
+	
+	/*
 	@DisplayName("Delete an feature")
 	@Test
 	void shouldDeleteFeature() {		

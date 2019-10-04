@@ -128,6 +128,14 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 			instr.setStatus(status);
 			try {
 				instr = save(instr);
+				
+				if(instr.getFeatures() != null && !instr.getFeatures().isEmpty()) {
+					for(FeatureEntity feat : instr.getFeatures()) {
+						feat.setStatus(status);
+						feat = save(feat);
+					}
+				}
+				
 			} catch (BusinessException e) {
 				throw new BusinessException(MSG_ERROR_FEATURE_SAVE);
 			}
