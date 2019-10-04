@@ -43,14 +43,14 @@ public class FeatureEntity extends BaseEntity{
 	
 	@Builder
 	public FeatureEntity(Long id, String name, FeatureTypeEnum type, StatusEnum status, 
-			FeatureEntity root, Set<FeatureEntity> features,Set<LuthierFeatureEntity> featuresLuthier) {
+			FeatureEntity root, Set<FeatureEntity> features,Set<LuthierFeatureEntity> luthiers) {
 		super(id);
 		this.name = name;
 		this.type = type;
 		this.status = status;
 		this.root = root;
 		this.features = features;
-		this.featuresLuthier = featuresLuthier;
+		this.luthiers = luthiers;
 	}
 
 	@EqualsAndHashCode.Exclude
@@ -75,5 +75,5 @@ public class FeatureEntity extends BaseEntity{
 	
 	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "feature")
-	private Set<LuthierFeatureEntity> featuresLuthier;
+	private Set<LuthierFeatureEntity> luthiers;
 }

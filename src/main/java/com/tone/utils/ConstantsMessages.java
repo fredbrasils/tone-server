@@ -31,6 +31,7 @@ public class ConstantsMessages {
 	public static final String MSG_ERROR_FEATURE_SAVE = "msg.error.feature.save";
 	public static final String MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER = "msg.error.feature.delete.bound.luthier";
 	public static final String MSG_ERROR_FEATURE_DELETE = "msg.error.feature.delete";
+	public static final String MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD = "msg.error.feature.delete.with.feature.child";
 	
 	private ConstantsMessages() {
 	}

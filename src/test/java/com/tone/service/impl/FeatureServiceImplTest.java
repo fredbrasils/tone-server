@@ -1,6 +1,9 @@
 package com.tone.service.impl;
 
 
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -22,9 +25,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.tone.exception.BusinessException;
 import com.tone.model.FeatureEntity;
 import com.tone.model.LuthierEntity;
+import com.tone.model.LuthierFeatureEntity;
 import com.tone.model.enumm.FeatureTypeEnum;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.service.FeatureService;
+import com.tone.service.LuthierFeatureService;
 import com.tone.service.LuthierService;
 import com.tone.utils.ConstantsMessages;
 
@@ -38,10 +43,13 @@ class FeatureServiceImplTest {
 	@Autowired
 	LuthierService luthierService;
 	
+	@Autowired
+	LuthierFeatureService luthierFeatureService;
+	
 	@BeforeEach
 	void setUp() {
 		
-		//LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
+		LuthierEntity luthier = LuthierEntity.builder().name("Luthier 1").email("luthier@contact.com").build();
 		
 		FeatureEntity feature1 = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
 		FeatureEntity feature2 = FeatureEntity.builder().name("body materials").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.STRING).build();
@@ -58,12 +66,15 @@ class FeatureServiceImplTest {
 			feature4 = featureService.save(feature4);
 			
 			feature5.setRoot(feature3);
-			feature5 = featureService.save(feature5);
+			feature5 = featureService.save(feature5);			
 			
-			/*
-			luthier.addFeature(feature2, "facebook.com/luthier1");
 			luthier = luthierService.save(luthier);		
-			*/
+			luthier.addFeature(feature4, "500");
+			
+			for(LuthierFeatureEntity lf : luthier.getFeatures()) {
+				luthierFeatureService.save(lf);
+			}
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -71,7 +82,15 @@ class FeatureServiceImplTest {
 	
 	@AfterEach
 	void close() {
-		/*
+		
+		Set<LuthierFeatureEntity> luthiersFeatures = luthierFeatureService.findAll().orElse(null);
+		luthiersFeatures.stream().forEach(lutFeat -> {
+			try {
+				luthierFeatureService.delete(lutFeat);
+			} catch (BusinessException e) {
+			}
+		});
+		
 		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 		luthiers.stream().forEach(lut -> {
 			try {
@@ -79,7 +98,7 @@ class FeatureServiceImplTest {
 			} catch (BusinessException e) {
 			}
 		});
-		*/
+		
 		
 		Set<FeatureEntity> features = featureService.findAll().orElse(null);		
 		features.stream().forEach(fet -> {
@@ -453,12 +472,12 @@ class FeatureServiceImplTest {
 		});
 	}
 	
-	/*
 	@DisplayName("Delete an feature")
 	@Test
 	void shouldDeleteFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("instagram");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("101-200");
+		FeatureEntity feature = featureRoot.get().get(0);
 		
 		try {
 			featureService.delete(feature);
@@ -466,14 +485,17 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		assertNull(featureService.findByName("instagram"));
+		featureRoot = featureService.findByName("101-200");
+		
+		assertTrue(featureRoot.isEmpty());
 	}
 	
 	@DisplayName("Cant delete an feature with luthier")
 	@Test
 	void shouldntDeleteFeature() {		
 		
-		FeatureEntity feature = featureService.findByName("facebook");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		FeatureEntity feature = featureRoot.get().get(0);
 		
 		try {
 			featureService.delete(feature);
@@ -482,7 +504,10 @@ class FeatureServiceImplTest {
 			assertEquals(e.getMessage(), MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER);
 		}
 		
-		assertNotNull(featureService.findByName("facebook"));
+		featureRoot = featureService.findByName("0-100");
+		
+		assertTrue(featureRoot.isPresent()); 
+		
 	}
 	
 	@DisplayName("Cant delete an feature without id")
@@ -498,5 +523,24 @@ class FeatureServiceImplTest {
 			assertEquals(e.getMessage(), MSG_ERROR_FEATURE_NOTFOUND);
 		}
 	}
-	*/
+	
+	@DisplayName("Cant delete an feature with feature childs")
+	@Test
+	void shouldntDeleteFeatureWithFeatureChild() {		
+		
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("price");
+		FeatureEntity feature = featureRoot.get().get(0);		
+		
+		try {
+			featureService.delete(feature);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD);
+		}
+		
+		featureRoot = featureService.findByName("price");
+		
+		assertTrue(featureRoot.isPresent()); 
+	}
+	
 }

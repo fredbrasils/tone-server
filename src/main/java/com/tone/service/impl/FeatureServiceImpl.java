@@ -4,6 +4,8 @@ import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_SAVE;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_EXIST;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD;
 
 import java.util.HashSet;
 import java.util.List;
@@ -157,11 +159,14 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		Optional<FeatureEntity> featureSaved = findById(feature.getId());
 		
 		if(featureSaved.isPresent()) {
-			/*
-			if(!luthierFeatureRepository.findAllOptionalByFeature(feature).isEmpty()) {
+			
+			if(featureSaved.get().getFeatures() != null && !featureSaved.get().getFeatures().isEmpty()) {
+				throw new BusinessException(MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD);
+			}
+			
+			if(featureSaved.get().getLuthiers() != null && !featureSaved.get().getLuthiers().isEmpty()) {
 				throw new BusinessException(MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER);
 			}
-			*/
 			
 			try {
 				super.delete(featureSaved.get());

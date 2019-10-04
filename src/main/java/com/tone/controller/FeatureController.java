@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -196,7 +197,7 @@ public class FeatureController extends BaseController{
      * @param errors
      * @return 
      */
-    /*@DeleteMapping
+    @DeleteMapping
     public ResponseEntity<GenericResponse> deleteFeature(@Valid @RequestBody Feature feature, BindingResult result,
 			HttpServletRequest request, Errors errors) {
     	
@@ -221,14 +222,14 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
     /**
      * 
      * @param listFeature Features that will be deleted
      * @param request
      * @return
      */
-    /*@DeleteMapping("/list")
+    @DeleteMapping("/list")
     public ResponseEntity<GenericResponse> deleteAllFeature(@RequestBody List<Feature> listFeature,
 			HttpServletRequest request) {    	
     	    
@@ -253,7 +254,7 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    */
+    
     /**
      * 
      * @param feature Feature that will be actived

@@ -76,7 +76,10 @@ public class LuthierEntity extends BaseEntity{
 	@OneToMany(mappedBy = "luthier")
 	private Set<LuthierFeatureEntity> features;
 	
-	
+	/**
+	 * 
+	 * @param instrument Instrument will be bound to Luthier
+	 */
 	public void addInstrument(InstrumentEntity instrument) {
 		
 		if(this.instruments == null) {
@@ -86,6 +89,11 @@ public class LuthierEntity extends BaseEntity{
 		this.instruments.add(instrument);
 	}
 	
+	/**
+	 * 
+	 * @param socialNetwork SocialNetwork will be bound to Luthier
+	 * @param link Link of social network
+	 */
 	public void addSocialNetwork(SocialNetworkEntity socialNetwork, String link) {
 		
 		if(this.socialNetworks == null) {
@@ -96,6 +104,10 @@ public class LuthierEntity extends BaseEntity{
 		this.socialNetworks.add(ls);
 	}
 	
+	/**
+	 * 
+	 * @param socialNetwork SocialNetwork will be bound to Luthier
+	 */
 	public void addSocialNetwork(LuthierSocialNetworkEntity socialNetwork) {
 		
 		if(this.socialNetworks == null) {
@@ -103,6 +115,21 @@ public class LuthierEntity extends BaseEntity{
 		}
 		
 		this.socialNetworks.add(socialNetwork);
+	}
+
+	/**
+	 * 
+	 * @param feature Feature will be bound to Luthier
+	 * @param value Feature's value
+	 */
+	public void addFeature(FeatureEntity feature, String value) {
+		
+		if(this.features == null) {
+			this.features = new HashSet<LuthierFeatureEntity>();
+		}
+		
+		LuthierFeatureEntity lf = LuthierFeatureEntity.builder().luthier(this).feature(feature).value(value).build();		
+		this.features.add(lf);
 	}
 
 }

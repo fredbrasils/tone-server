@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -448,12 +449,12 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
         verify(featureService).inactive(ArgumentMatchers.any());
     }
-    /*
+    
     @DisplayName(value="Delete feature")
     @Test
     void deleteFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").build();
+    	Feature feature = Feature.builder().id(1l).name("style").build();
     	
         mockMvc.perform(delete("/api/feature")
         		.accept(MediaType.APPLICATION_JSON)
@@ -469,7 +470,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteFeatureWithoutId() throws Exception {
     	
-    	Feature feature = Feature.builder().name("instagram").build();
+    	Feature feature = Feature.builder().name("style").build();
     	
         mockMvc.perform(delete("/api/feature")
         		.accept(MediaType.APPLICATION_JSON)
@@ -503,7 +504,7 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteFeature() throws Exception {
     	
-    	Feature feature = Feature.builder().id(1l).name("instagram").build();
+    	Feature feature = Feature.builder().id(1l).name("style").build();
     	
     	Mockito.doThrow(BusinessException.class).when(featureService).delete(ArgumentMatchers.any(FeatureEntity.class));
     	
@@ -522,9 +523,9 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void deleteListOfFeatures() throws Exception {
     	
-    	Feature feature1 = Feature.builder().id(1l).name("instagram").build();
-    	Feature feature2 = Feature.builder().id(2l).name("facebook").build();
-    	Feature feature3 = Feature.builder().id(3l).name("other").build();
+    	Feature feature1 = Feature.builder().id(1l).name("style").build();
+    	Feature feature2 = Feature.builder().id(2l).name("price").build();
+    	Feature feature3 = Feature.builder().id(3l).name("body").build();
     	List<Feature> list = new ArrayList<Feature>();
     	list.add(feature1);list.add(feature2);list.add(feature3);
     	
@@ -542,9 +543,9 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteListOfFeaturesWithoutId() throws Exception {
     	
-    	Feature feature1 = Feature.builder().id(1l).name("instagram").build();
-    	Feature feature2 = Feature.builder().name("facebook").build();
-    	Feature feature3 = Feature.builder().id(3l).name("other").build();
+    	Feature feature1 = Feature.builder().id(1l).name("style").build();
+    	Feature feature2 = Feature.builder().name("price").build();
+    	Feature feature3 = Feature.builder().id(3l).name("body").build();
     	List<Feature> list = new ArrayList<Feature>();
     	list.add(feature1);list.add(feature2);list.add(feature3);
     	
@@ -563,9 +564,9 @@ class FeatureControllerTest extends AbstractRestControllerTest{
     @Test
     void shouldntDeleteListOfFeatures() throws Exception {
     	
-    	Feature feature1 = Feature.builder().id(1l).name("instagram").build();
-    	Feature feature2 = Feature.builder().id(2l).name("facebook").build();
-    	Feature feature3 = Feature.builder().id(3l).name("other").build();
+    	Feature feature1 = Feature.builder().id(1l).name("style").build();
+    	Feature feature2 = Feature.builder().id(2l).name("price").build();
+    	Feature feature3 = Feature.builder().id(3l).name("body").build();
     	List<Feature> list = new ArrayList<Feature>();
     	list.add(feature1);list.add(feature2);list.add(feature3);
     	
@@ -581,5 +582,5 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
         verify(featureService, times(1)).delete(ArgumentMatchers.any());
     }
-    */
+    
 }
