@@ -26,3 +26,8 @@ hs_err_pid*
 .project
 .settings/
 
+.idea/*
+
+tone-server.eml
+
+tone-server.iml
