@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * 
@@ -29,7 +30,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -38,14 +39,6 @@ public class InstrumentEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public InstrumentEntity(Long id, String name, StatusEnum status, Set<LuthierEntity> luthiers) {
-		super(id);
-		this.name = name;
-		this.status = status;
-		this.luthiers = luthiers;
-	}
 
 	@NotBlank
 	private String name;
