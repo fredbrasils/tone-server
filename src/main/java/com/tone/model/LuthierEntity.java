@@ -20,11 +20,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -33,20 +34,6 @@ public class LuthierEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public LuthierEntity(Long id, String name, String email, String phone, String address, 
-			Set<LuthierSocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
-			Set<LuthierFeatureEntity> features) {
-		super(id);
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.address = address;
-		this.socialNetworks = socialNetworks;
-		this.instruments = instruments;
-		this.features = features;
-	}
 
 	@NotBlank
 	private String name;
@@ -128,7 +115,7 @@ public class LuthierEntity extends BaseEntity{
 			this.features = new HashSet<LuthierFeatureEntity>();
 		}
 		
-		LuthierFeatureEntity lf = LuthierFeatureEntity.builder().luthier(this).feature(feature).value(value).build();		
+		LuthierFeatureEntity lf = new LuthierFeatureEntity(this,feature,value);
 		this.features.add(lf);
 	}
 

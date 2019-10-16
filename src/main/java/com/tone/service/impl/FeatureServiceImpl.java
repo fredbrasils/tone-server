@@ -6,6 +6,7 @@ import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_SAVE;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_EXIST;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_ROOT_NOTFOUND;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> implements FeatureService{
 	
+	private static final Integer ONE = 1;
 	private FeatureRepository featureRepository;
 	
 	public FeatureServiceImpl(FeatureRepository featureRepository) {
@@ -44,32 +46,54 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	public FeatureEntity save(FeatureEntity entity) throws BusinessException {
 
 		log.info("Save feature");
-		Optional<List<FeatureEntity>> features = this.findByName(entity.getName());		
+		Optional<List<FeatureEntity>> features = findByName(entity.getName());		
 		
 		if(features.isPresent()) {
 			
 			Predicate<FeatureEntity> predicate = f -> f.getId() != entity.getId() 
 					&& ( (f.getRoot() != null && entity.getRoot() != null 
 					&& f.getRoot().getId() == entity.getRoot().getId())
-							|| f.getRoot() == entity.getRoot());		
+							|| f.getRoot() == entity.getRoot());	
 			
 			if(features.get().stream().findFirst().filter(predicate).isPresent()) {
 				throw new BusinessException(MSG_ERROR_FEATURE_EXIST);				
 			}
 		}
 		
-		/*
-		if(feature != null && feature.getId() != entity.getId() 
-				&& ( (feature.getRoot() != null && entity.getRoot() != null 
-					   && feature.getRoot().getId() == entity.getRoot().getId())
-				   || feature.getRoot() == entity.getRoot())) {
-			throw new BusinessException(MSG_ERROR_FEATURE_EXIST);
+		if(entity.getPosition() == null) {
+			entity.setPosition(getOrder(entity));
 		}
-		*/
 		
 		return super.save(entity);
 	}
 	
+	/**
+	 * Define Feature's order
+	 * @param entity 
+	 */
+	private Integer getOrder(FeatureEntity entity) throws BusinessException{
+		
+		log.info("Define feature's order");
+		Integer order = ONE;
+		
+		// if it is a feature root
+		if(entity.getRoot() == null) {
+			
+			Optional<Set<FeatureEntity>> features = this.findAll();		
+			return features.isPresent() ? features.get().size() + order : order;
+			
+		}else { // if it is a feature child
+			
+			Optional<FeatureEntity> features = findById(entity.getRoot().getId());		
+			
+			if(features.isEmpty()) {
+				throw new BusinessException(MSG_ERROR_FEATURE_ROOT_NOTFOUND);
+			}
+			
+			return features.get().getFeatures() != null ? features.get().getFeatures().size() + order : order;			
+		}
+	}
+
 	/**
 	 * @param name Feature's name
 	 * @return Feature searched

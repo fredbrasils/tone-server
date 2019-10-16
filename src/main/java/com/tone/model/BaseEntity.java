@@ -16,6 +16,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -38,6 +39,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Getter
 @Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -46,11 +48,6 @@ public class BaseEntity implements Serializable {
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-		
-	public BaseEntity(Long id) {
-		super();
-		this.id = id;
-	}
 
 	@Id
 	@GeneratedValue(generator = "increment")

@@ -25,11 +25,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,18 +41,6 @@ public class FeatureEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public FeatureEntity(Long id, String name, FeatureTypeEnum type, StatusEnum status, 
-			FeatureEntity root, Set<FeatureEntity> features,Set<LuthierFeatureEntity> luthiers) {
-		super(id);
-		this.name = name;
-		this.type = type;
-		this.status = status;
-		this.root = root;
-		this.features = features;
-		this.luthiers = luthiers;
-	}
 
 	@EqualsAndHashCode.Exclude
 	@JsonSerialize(using = FeatureEntitySerializer.class)
@@ -76,4 +65,6 @@ public class FeatureEntity extends BaseEntity{
 	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "feature")
 	private Set<LuthierFeatureEntity> luthiers;
+	
+	private Integer position;	
 }

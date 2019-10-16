@@ -17,27 +17,28 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "luthier_feature")
 public class LuthierFeatureEntity implements Serializable{ 
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
+
 	public LuthierFeatureEntity(LuthierEntity luthier, FeatureEntity feature, String value) {
 		super();
 		this.luthier = luthier;
 		this.feature = feature;
 		this.value = value;
 		this.id = LuthierFeatureKey.builder().luthierId(luthier.getId()).featureId(feature.getId()).build();
-	}	
+	}
 	
 	@EmbeddedId
 	private LuthierFeatureKey id;

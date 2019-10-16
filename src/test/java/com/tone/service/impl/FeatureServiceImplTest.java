@@ -167,7 +167,8 @@ class FeatureServiceImplTest {
 		}
 		
 		Optional<List<FeatureEntity>> feature = featureService.findByName("finishes");
-		assertTrue(feature.isPresent());		
+		assertTrue(feature.isPresent());
+		assertEquals(4,feature.get().get(0).getPosition().intValue());
 	}
 	
 	@DisplayName("Save feature")
@@ -189,6 +190,8 @@ class FeatureServiceImplTest {
 		assertTrue(featureRoot.isPresent());
 		assertNotNull(featureRoot.get().get(0).getFeatures());
 		
+		Optional<List<FeatureEntity>> nitro = featureService.findByName("Nitro");		
+		assertEquals(1,nitro.get().get(0).getPosition().intValue());
 	}
 	
 	@DisplayName("Save feature with an existing group's name")

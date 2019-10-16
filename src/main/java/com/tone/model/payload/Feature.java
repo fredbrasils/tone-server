@@ -39,4 +39,6 @@ public class Feature implements Serializable{
 	
 	@EqualsAndHashCode.Exclude
 	private Set<LuthierFeature> features;
+	
+	private Integer position;
 }
