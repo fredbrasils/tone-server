@@ -1,29 +1,19 @@
 package com.tone.service.impl;
 
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_SAVE;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_EXIST;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_ROOT_NOTFOUND;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import com.tone.exception.BusinessException;
 import com.tone.model.FeatureEntity;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.repository.FeatureRepository;
 import com.tone.service.FeatureService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @Service
@@ -36,7 +26,7 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		super(featureRepository);
 		this.featureRepository = featureRepository;
 	}
-	
+
 	/**
 	 * @param entity Feature that will be save
 	 * @return Feature saved
@@ -50,10 +40,10 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		
 		if(features.isPresent()) {
 			
-			Predicate<FeatureEntity> predicate = f -> f.getId() != entity.getId() 
+			Predicate<FeatureEntity> predicate = f -> !f.getId().equals(entity.getId())
 					&& ( (f.getRoot() != null && entity.getRoot() != null 
-					&& f.getRoot().getId() == entity.getRoot().getId())
-							|| f.getRoot() == entity.getRoot());	
+					&& f.getRoot().getId().equals(entity.getRoot().getId()))
+							|| ( f.getRoot() == null && entity.getRoot() == null));
 			
 			if(features.get().stream().findFirst().filter(predicate).isPresent()) {
 				throw new BusinessException(MSG_ERROR_FEATURE_EXIST);				
@@ -79,7 +69,7 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		// if it is a feature root
 		if(entity.getRoot() == null) {
 			
-			Optional<Set<FeatureEntity>> features = this.findAll();		
+			Optional<Set<FeatureEntity>> features = findAll();
 			return features.isPresent() ? features.get().size() + order : order;
 			
 		}else { // if it is a feature child
@@ -139,12 +129,12 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	}
 	
 	/**
-	 * @param entity Feature that will be actived or inactived
+	 * @param feature Feature that will be actived or inactived
 	 * @param status The new Feature's status 
 	 * @return Feature actived or inactived
 	 * @throws BusinessException 
 	 */
-	public FeatureEntity activeOrInactive(FeatureEntity feature, StatusEnum status) throws BusinessException{
+	private FeatureEntity activeOrInactive(FeatureEntity feature, StatusEnum status) throws BusinessException{
 		
 		Optional<FeatureEntity> featureSaved = findById(feature.getId());
 		FeatureEntity instr = null;
@@ -173,7 +163,7 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	}
 	
 	/**
-	 * @param entity Feature that will be deleted
+	 * @param feature Feature that will be deleted
 	 * @return
 	 * @throws BusinessException 
 	 */
@@ -203,12 +193,81 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		}
 		
 	}
-	
+
+	/**
+	 *
+	 * @return all features
+	 */
 	@Override
 	public Optional<Set<FeatureEntity>> findAll() {
 		Set<FeatureEntity> entities = new HashSet<>();
 		this.featureRepository.findAll().forEach(entities::add);
-		return Optional.ofNullable(entities);		
-		
+		return Optional.ofNullable(entities);
 	}
+
+	/**
+	 * @param feature Feature that will be update order
+	 * @return
+	 * @throws BusinessException
+	 */
+	@Override
+	public void changeOrder(FeatureEntity feature) throws BusinessException{
+
+		Optional<FeatureEntity> featureSaved = findById(feature.getId());
+
+		if(featureSaved.isPresent()) {
+
+			List<FeatureEntity> listFeatures;
+			Integer oldPosition = featureSaved.get().getPosition();
+			Integer newPosition = feature.getPosition();
+
+			if(featureSaved.get().getRoot() == null){
+				listFeatures = new ArrayList<>(findAll().get());
+			}else{
+				listFeatures = new ArrayList<>(featureSaved.get().getFeatures());;
+			}
+
+			// down
+			if(oldPosition.compareTo(newPosition) < 0){
+
+				listFeatures = listFeatures.stream()
+						.sorted(Comparator.comparingInt(FeatureEntity::getPosition).reversed())
+						.collect(Collectors.toList());
+
+			}else{ // up
+
+				listFeatures = listFeatures.stream()
+						.sorted(Comparator.comparingInt(FeatureEntity::getPosition))
+						.collect(Collectors.toList());
+			}
+
+			final boolean[] found = new boolean[1];
+
+			int bound = listFeatures.size();
+			for (int idx = 0; idx < bound; idx++) {
+				if ((listFeatures.get(idx).getPosition().equals(newPosition)) || (found[0] && !listFeatures.get(idx).getPosition().equals(oldPosition))) {
+					found[0] = true;
+					listFeatures.get(idx).setPosition(listFeatures.get(idx + 1).getPosition());
+					try {
+						save(listFeatures.get(idx));
+					} catch (BusinessException e) {
+						throw new BusinessException(MSG_ERROR_FEATURE_SAVE);
+					}
+				} else if (listFeatures.get(idx).getPosition().equals(oldPosition)) {
+					found[0] = false;
+					listFeatures.get(idx).setPosition(newPosition);
+					try {
+						save(listFeatures.get(idx));
+					} catch (BusinessException e) {
+						throw new BusinessException(MSG_ERROR_FEATURE_SAVE);
+					}
+				}
+			}
+
+		}else {
+			throw new BusinessException(MSG_ERROR_FEATURE_NOTFOUND);
+		}
+
+	}
+
 }

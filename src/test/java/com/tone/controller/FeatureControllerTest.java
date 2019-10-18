@@ -582,5 +582,73 @@ class FeatureControllerTest extends AbstractRestControllerTest{
 
         verify(featureService, times(1)).delete(ArgumentMatchers.any());
     }
-    
+
+    @DisplayName(value="Change order feature")
+    @Test
+    void changeOrderFeature() throws Exception {
+
+        Feature feature = Feature.builder().id(1l).name("style").build();
+
+        mockMvc.perform(put("/api/feature/changeOrder")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(feature))).andDo(print())
+                .andExpect(status().isOk())
+        ;
+
+        verify(featureService).changeOrder(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Cant change order feature without id")
+    @Test
+    void shouldntChangeOrderFeatureWithoutId() throws Exception {
+
+        Feature feature = Feature.builder().name("style").build();
+
+        mockMvc.perform(put("/api/feature/changeOrder")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(feature))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(featureService, times(0)).changeOrder(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Cant change order feature without name")
+    @Test
+    void shouldntChangeOrderFeatureWithoutName() throws Exception {
+
+        Feature feature = Feature.builder().id(1l).build();
+
+        mockMvc.perform(put("/api/feature/changeOrder")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(feature))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(featureService, times(0)).delete(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Cant change order feature")
+    @Test
+    void shouldntChangeOrderFeature() throws Exception {
+
+        Feature feature = Feature.builder().id(1l).name("style").build();
+
+        Mockito.doThrow(BusinessException.class).when(featureService).changeOrder(ArgumentMatchers.any(FeatureEntity.class));
+
+        mockMvc.perform(put("/api/feature/changeOrder")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(feature))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(featureService, times(1)).changeOrder(ArgumentMatchers.any());
+    }
 }

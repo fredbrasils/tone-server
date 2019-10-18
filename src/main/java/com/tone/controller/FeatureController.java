@@ -306,5 +306,37 @@ public class FeatureController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(featureSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
-    
+
+	/**
+	 * Change order feature
+	 * @param feature Feature that will be change order
+	 * @param result
+	 * @param request
+	 * @param errors
+	 * @return return feature updated
+	 */
+	@PutMapping("/changeOrder")
+	public ResponseEntity<GenericResponse> changeOrderFeature(@Valid @RequestBody Feature feature, BindingResult result,
+														 HttpServletRequest request, Errors errors) {
+		if (!result.hasErrors() && feature.getId() != null) {
+
+			try {
+
+				FeatureEntity featureEntity = (FeatureEntity) Utils.convertFromTo(feature, FeatureEntity.class);
+				featureService.changeOrder(featureEntity);
+
+			} catch (BusinessException e) {
+				return messageError(request, new String[] {e.getMessage()}, null);
+			}
+		}else {
+
+			if(result.hasErrors()) {
+				return messageError(request, validateErrors(result), null);
+			}else {
+				return messageError(request, new String[] {NOTBLANK_FEATURE_ID}, null);
+			}
+		}
+
+		return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	}
 }

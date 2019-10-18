@@ -18,5 +18,6 @@ public interface FeatureService extends BaseService<FeatureEntity, Long>{
 	FeatureEntity active(FeatureEntity entity) throws BusinessException; 
 	
 	FeatureEntity inactive(FeatureEntity entity) throws BusinessException;
-	
+
+	void changeOrder(FeatureEntity feature) throws BusinessException;
 }

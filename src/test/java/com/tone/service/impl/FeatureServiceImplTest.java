@@ -4,14 +4,14 @@ package com.tone.service.impl;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_BOUND_LUTHIER;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_DELETE_WITH_FEATURE_CHILD;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_FEATURE_NOTFOUND;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,28 +53,44 @@ class FeatureServiceImplTest {
 		
 		FeatureEntity feature1 = FeatureEntity.builder().name("style").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
 		FeatureEntity feature2 = FeatureEntity.builder().name("body materials").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.STRING).build();
-		FeatureEntity feature3 = FeatureEntity.builder().name("price").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
-		FeatureEntity feature4 = FeatureEntity.builder().name("0-100").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
-		FeatureEntity feature5 = FeatureEntity.builder().name("101-200").status(StatusEnum.INACTIVE).type(FeatureTypeEnum.NUMBER).build();
-		
-		try {
-			feature1 = featureService.save(feature1);
-			feature2 = featureService.save(feature2);
-			feature3 = featureService.save(feature3);
 
-			feature4.setRoot(feature3);
-			feature4 = featureService.save(feature4);
+		FeatureEntity feature3 = FeatureEntity.builder().name("price").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		FeatureEntity feature31 = FeatureEntity.builder().name("0-100").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		FeatureEntity feature32 = FeatureEntity.builder().name("101-200").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		FeatureEntity feature33 = FeatureEntity.builder().name("201-300").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+		FeatureEntity feature34= FeatureEntity.builder().name("301-400").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.NUMBER).build();
+
+		FeatureEntity feature4 = FeatureEntity.builder().name("a1").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.BOOLEAN).build();
+		FeatureEntity feature5 = FeatureEntity.builder().name("a2").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.STRING).build();
+		FeatureEntity feature6 = FeatureEntity.builder().name("a3").status(StatusEnum.ACTIVE).type(FeatureTypeEnum.STRING).build();
+
+		try {
+			featureService.save(feature1);
+			featureService.save(feature2);
+			feature3 = featureService.save(feature3);
+			featureService.save(feature4);
+			featureService.save(feature5);
+			featureService.save(feature6);
+
+			feature31.setRoot(feature3);
+			feature31 = featureService.save(feature31);
 			
-			feature5.setRoot(feature3);
-			feature5 = featureService.save(feature5);			
-			
+			feature32.setRoot(feature3);
+			featureService.save(feature32);
+
+			feature33.setRoot(feature3);
+			featureService.save(feature33);
+
+			feature34.setRoot(feature3);
+			featureService.save(feature34);
+
 			luthier = luthierService.save(luthier);		
-			luthier.addFeature(feature4, "500");
+			luthier.addFeature(feature31, "500");
 			
 			for(LuthierFeatureEntity lf : luthier.getFeatures()) {
 				luthierFeatureService.save(lf);
 			}
-			
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -87,29 +103,32 @@ class FeatureServiceImplTest {
 		luthiersFeatures.stream().forEach(lutFeat -> {
 			try {
 				luthierFeatureService.delete(lutFeat);
-			} catch (BusinessException e) {
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		});
-		
+
 		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 		luthiers.stream().forEach(lut -> {
 			try {
 				luthierService.delete(lut);
-			} catch (BusinessException e) {
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		});
-		
-		
-		Set<FeatureEntity> features = featureService.findAll().orElse(null);		
+
+		Set<FeatureEntity> features = featureService.findAll().orElse(null);
 		features.stream().forEach(fet -> {
 			try {
 				for(FeatureEntity f : fet.getFeatures()) {
 					featureService.delete(f);
 				}
 				featureService.delete(fet);
-			} catch (BusinessException e) {
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		});
+
 	}
 	
 	@DisplayName("Find all feature")
@@ -119,7 +138,7 @@ class FeatureServiceImplTest {
 		Set<FeatureEntity> features = featureService.findAll().orElse(null);
 		
 		assertNotNull(features);
-		assertEquals(3, features.size());
+		assertEquals(6, features.size());
 	}
 
 	@DisplayName("Find feature by name")
@@ -143,7 +162,7 @@ class FeatureServiceImplTest {
 	void findAllFeatureActive() {
 		
 		Set<FeatureEntity> feature = featureService.findActive();
-		assertEquals(3,feature.size());		
+		assertEquals(9,feature.size());
 	}
 	
 	@DisplayName("Find feature inactive")
@@ -151,7 +170,7 @@ class FeatureServiceImplTest {
 	void findAllFeatureInactive() {
 		
 		Set<FeatureEntity> feature = featureService.findInactive();
-		assertEquals(2,feature.size());		
+		assertEquals(1,feature.size());
 	}
 	
 	@DisplayName("Save feature root")
@@ -168,7 +187,7 @@ class FeatureServiceImplTest {
 		
 		Optional<List<FeatureEntity>> feature = featureService.findByName("finishes");
 		assertTrue(feature.isPresent());
-		assertEquals(4,feature.get().get(0).getPosition().intValue());
+		assertEquals(7,feature.get().get(0).getPosition().intValue());
 	}
 	
 	@DisplayName("Save feature")
@@ -190,7 +209,7 @@ class FeatureServiceImplTest {
 		assertTrue(featureRoot.isPresent());
 		assertNotNull(featureRoot.get().get(0).getFeatures());
 		
-		Optional<List<FeatureEntity>> nitro = featureService.findByName("Nitro");		
+		Optional<List<FeatureEntity>> nitro = featureService.findByName("Nitro");
 		assertEquals(1,nitro.get().get(0).getPosition().intValue());
 	}
 	
@@ -354,9 +373,9 @@ class FeatureServiceImplTest {
 	@Test
 	void shouldUpdateFeatureWithSameName() {		
 		
-		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("0-100");
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("101-200");
 		FeatureEntity feature = featureRoot.get().get(0);
-		feature.setName("0-100");
+		feature.setName("101-200");
 		
 		try {
 			featureService.save(feature);
@@ -364,7 +383,7 @@ class FeatureServiceImplTest {
 			fail();
 		}
 		
-		assertTrue(featureService.findByName("0-100").isPresent());
+		assertTrue(featureService.findByName("101-200").isPresent());
 	}
 	
 	@DisplayName("Active an feature")
@@ -545,5 +564,156 @@ class FeatureServiceImplTest {
 		
 		assertTrue(featureRoot.isPresent()); 
 	}
-	
+
+	@DisplayName("Reorder feature root to Up")
+	@Test
+	void reorderFeatureRootToUp() {
+
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("a2");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setPosition(2);
+
+		try {
+			featureService.changeOrder(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		List<FeatureEntity> features = featureService.findAll().get().stream()
+				.sorted(Comparator.comparingInt(FeatureEntity::getPosition))
+				.collect(Collectors.toList());
+
+
+		features.forEach(feat -> {
+
+			if(feat.getName().equals("style")){
+				assertEquals(1,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a2")){
+				assertEquals(2,feat.getPosition().intValue());
+			}else if(feat.getName().equals("body materials")){
+				assertEquals(3,feat.getPosition().intValue());
+			}else if(feat.getName().equals("price")){
+				assertEquals(4,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a1")){
+				assertEquals(5,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a3")){
+				assertEquals(6,feat.getPosition().intValue());
+			}
+
+		});
+
+		assertEquals(6,features.size());
+	}
+
+	@DisplayName("Reorder feature root to Down")
+	@Test
+	void reorderFeatureRootToDown() {
+
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("body materials");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setPosition(4);
+
+		try {
+			featureService.changeOrder(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		List<FeatureEntity> features = featureService.findAll().get().stream()
+				.sorted(Comparator.comparingInt(FeatureEntity::getPosition).reversed())
+				.collect(Collectors.toList());
+
+
+		features.forEach(feat -> {
+
+			if(feat.getName().equals("style")){
+				assertEquals(1,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a2")){
+				assertEquals(5,feat.getPosition().intValue());
+			}else if(feat.getName().equals("body materials")){
+				assertEquals(4,feat.getPosition().intValue());
+			}else if(feat.getName().equals("price")){
+				assertEquals(2,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a1")){
+				assertEquals(3,feat.getPosition().intValue());
+			}else if(feat.getName().equals("a3")){
+				assertEquals(6,feat.getPosition().intValue());
+			}
+
+		});
+
+		assertEquals(6,features.size());
+	}
+
+
+	@DisplayName("Reorder feature to Up")
+	@Test
+	void reorderFeatureToUp() {
+
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("201-300");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setPosition(1);
+
+		try {
+			featureService.changeOrder(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		List<FeatureEntity> features = featureService.findAll().get().stream()
+				.sorted(Comparator.comparingInt(FeatureEntity::getPosition))
+				.collect(Collectors.toList());
+
+		features.forEach(feat -> {
+
+			if(feat.getName().equals("201-300")){
+				assertEquals(1,feat.getPosition().intValue());
+			}else if(feat.getName().equals("0-100")){
+				assertEquals(2,feat.getPosition().intValue());
+			}else if(feat.getName().equals("101-200")){
+				assertEquals(3,feat.getPosition().intValue());
+			}else if(feat.getName().equals("301-400")){
+				assertEquals(4,feat.getPosition().intValue());
+			}
+
+		});
+
+		assertEquals(6,features.size());
+	}
+
+	@DisplayName("Reorder feature to Down")
+	@Test
+	void reorderFeatureToDown() {
+
+		Optional<List<FeatureEntity>> featureRoot = featureService.findByName("101-200");
+		FeatureEntity feature = featureRoot.get().get(0);
+		feature.setPosition(4);
+
+		try {
+			featureService.changeOrder(feature);
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		List<FeatureEntity> features = featureService.findAll().get().stream()
+				.sorted(Comparator.comparingInt(FeatureEntity::getPosition).reversed())
+				.collect(Collectors.toList());
+
+		features.forEach(feat -> {
+
+			if(feat.getName().equals("0-100")){
+				assertEquals(1,feat.getPosition().intValue());
+			}else if(feat.getName().equals("101-200")){
+				assertEquals(4,feat.getPosition().intValue());
+			}else if(feat.getName().equals("201-300")){
+				assertEquals(2,feat.getPosition().intValue());
+			}else if(feat.getName().equals("301-400")){
+				assertEquals(3,feat.getPosition().intValue());
+			}
+
+		});
+
+		assertEquals(6,features.size());
+	}
+
 }
