@@ -4,10 +4,10 @@ package com.tone.service.impl;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +28,7 @@ import com.tone.service.SocialNetworkService;
 import com.tone.service.LuthierService;
 import com.tone.utils.ConstantsMessages;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_NOTFOUND;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -50,10 +51,10 @@ class SocialNetworkServiceImplTest {
 		SocialNetworkEntity socialNetwork4 = SocialNetworkEntity.builder().name("Other").status(StatusEnum.INACTIVE).build();
 		
 		try {
-			socialNetwork1 = socialNetworkService.save(socialNetwork1);
+			socialNetworkService.save(socialNetwork1);
 			socialNetwork2 = socialNetworkService.save(socialNetwork2);
-			socialNetwork3 = socialNetworkService.save(socialNetwork3);
-			socialNetwork4 = socialNetworkService.save(socialNetwork4);
+			socialNetworkService.save(socialNetwork3);
+			socialNetworkService.save(socialNetwork4);
 			
 			luthier.addSocialNetwork(socialNetwork2, "facebook.com/luthier1");
 			luthier = luthierService.save(luthier);		
@@ -96,17 +97,15 @@ class SocialNetworkServiceImplTest {
 	@DisplayName("Find socialNetwork by name")
 	@Test
 	void findByName() {
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
-		assertNotNull(socialNetwork);		
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("instagram");
+		assertTrue(socialNetwork.isPresent());
 	}
 	
 	@DisplayName("Not Found socialNetwork by name")
 	@Test
 	void notfoundSocialNetworkByName() {
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("myspace");
-		assertNull(socialNetwork);		
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("myspace");
+		assertTrue(socialNetwork.isEmpty());
 	}
 	
 	@DisplayName("Find socialNetwork active")
@@ -135,9 +134,9 @@ class SocialNetworkServiceImplTest {
 		} catch (BusinessException e) {
 			fail();
 		}
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("myspace");
-		assertNotNull(socialNetwork);		
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("myspace");
+		assertTrue(socialNetwork.isPresent());
 	}
 	
 	@DisplayName("Cant save an socialNetwork with an exists name")
@@ -155,28 +154,28 @@ class SocialNetworkServiceImplTest {
 	
 	@DisplayName("Update socialNetwork")
 	@Test
-	void update() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
-		socialNetwork.setName("myspace");
+	void update() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.get().get(0).setName("myspace");
 		try {
-			socialNetworkService.save(socialNetwork);
+			socialNetworkService.save(socialNetwork.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNull(socialNetworkService.findByName("instagram"));
-		assertNotNull(socialNetworkService.findByName("myspace"));
+		assertTrue(socialNetworkService.findByName("instagram").isEmpty());
+		assertTrue(socialNetworkService.findByName("myspace").isPresent());
 	}
 	
 	@DisplayName("Cant update an socialNetwork with an exists name")
 	@Test
-	void shouldntUpdateWithExistsName() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
-		socialNetwork.setName("facebook");
+	void shouldntUpdateWithExistsName() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.get().get(0).setName("facebook");
 		try {
-			socialNetworkService.save(socialNetwork);
+			socialNetworkService.save(socialNetwork.get().get(0));
 			fail();
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_EXIST);
@@ -185,47 +184,47 @@ class SocialNetworkServiceImplTest {
 	
 	@DisplayName("Update an socialNetwork with the same name")
 	@Test
-	void shouldUpdateWithSameName() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
-		socialNetwork.setName("instagram");
+	void shouldUpdateWithSameName() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("instagram");
+		socialNetwork.get().get(0).setName("instagram");
 		try {
-			socialNetworkService.save(socialNetwork);
+			socialNetworkService.save(socialNetwork.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
-		
-		assertNotNull(socialNetworkService.findByName("instagram"));
+
+		assertTrue(socialNetworkService.findByName("instagram").isPresent());
 	}
 	
 	@DisplayName("Active an socialNetwork")
 	@Test
-	void shouldActiveSocialNetwork() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("Website");
+	void shouldActiveSocialNetwork() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("Website");
 		
 		try {
-			socialNetworkService.active(socialNetwork);
+			socialNetworkService.active(socialNetwork.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.ACTIVE, socialNetworkService.findByName("Website").getStatus());
+		assertEquals(StatusEnum.ACTIVE, socialNetworkService.findByName("Website").get().get(0).getStatus());
 	}
 	
 	@DisplayName("Inactive an socialNetwork")
 	@Test
-	void shouldInactiveSocialNetwork() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("facebook");
+	void shouldInactiveSocialNetwork() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("facebook");
 		
 		try {
-			socialNetworkService.inactive(socialNetwork);
+			socialNetworkService.inactive(socialNetwork.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.INACTIVE, socialNetworkService.findByName("facebook").getStatus());
+		assertEquals(StatusEnum.INACTIVE, socialNetworkService.findByName("facebook").get().get(0).getStatus());
 	}
 	
 	@DisplayName("Dont actived an socialNetwork that doesn exist")
@@ -258,33 +257,33 @@ class SocialNetworkServiceImplTest {
 	
 	@DisplayName("Delete an socialNetwork")
 	@Test
-	void shouldDeleteSocialNetwork() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("instagram");
+	void shouldDeleteSocialNetwork() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("instagram");
 		
 		try {
-			socialNetworkService.delete(socialNetwork);
+			socialNetworkService.delete(socialNetwork.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNull(socialNetworkService.findByName("instagram"));
+		assertTrue(socialNetworkService.findByName("instagram").isEmpty());
 	}
 	
 	@DisplayName("Cant delete an socialNetwork with luthier")
 	@Test
-	void shouldntDeleteSocialNetwork() {		
-		
-		SocialNetworkEntity socialNetwork = socialNetworkService.findByName("facebook");
+	void shouldntDeleteSocialNetwork() {
+
+		Optional<List<SocialNetworkEntity>> socialNetwork = socialNetworkService.findByName("facebook");
 		
 		try {
-			socialNetworkService.delete(socialNetwork);
+			socialNetworkService.delete(socialNetwork.get().get(0));
 			fail();
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER);
 		}
 		
-		assertNotNull(socialNetworkService.findByName("facebook"));
+		assertTrue(socialNetworkService.findByName("facebook").isPresent());
 	}
 	
 	@DisplayName("Cant delete an socialNetwork without id")

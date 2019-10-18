@@ -10,7 +10,7 @@ import com.tone.model.enumm.StatusEnum;
 
 public interface SocialNetworkRepository extends PagingAndSortingRepository<SocialNetworkEntity, Long> {
 
-	Optional<SocialNetworkEntity> findOptionalByNameIgnoreCase(String name);
-	
+	Optional<List<SocialNetworkEntity>> findOptionalByNameContainingIgnoreCase(String name);
+
 	Optional<List<SocialNetworkEntity>> findAllOptionalByStatus(StatusEnum status);
 }
