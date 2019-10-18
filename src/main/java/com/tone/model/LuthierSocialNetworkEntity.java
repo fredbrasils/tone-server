@@ -14,11 +14,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -27,15 +28,7 @@ public class LuthierSocialNetworkEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public LuthierSocialNetworkEntity(Long id, SocialNetworkEntity socialNetwork, LuthierEntity luthier, String link) {
-		super(id);
-		this.socialNetwork = socialNetwork;
-		this.link = link;
-		this.luthier = luthier;
-	}
-	
+
 	@NotBlank
 	private String link;
 

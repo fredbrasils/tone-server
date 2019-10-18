@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 
 import com.tone.model.enumm.FeatureTypeEnum;
+import com.tone.model.enumm.StatusEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
@@ -31,8 +32,13 @@ public class Feature implements Serializable{
 	@NotBlank
 	private String name;
 
-	@NotBlank
 	private FeatureTypeEnum type;	
 	
+	@EqualsAndHashCode.Exclude
+	private StatusEnum status;
+	
+	@EqualsAndHashCode.Exclude
 	private Set<LuthierFeature> features;
+	
+	private Integer position;
 }

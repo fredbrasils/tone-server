@@ -20,11 +20,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -33,20 +34,6 @@ public class LuthierEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public LuthierEntity(Long id, String name, String email, String phone, String address, 
-			Set<LuthierSocialNetworkEntity> socialNetworks,Set<InstrumentEntity> instruments,
-			Set<LuthierFeatureEntity> features) {
-		super(id);
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.address = address;
-		this.socialNetworks = socialNetworks;
-		this.instruments = instruments;
-		this.features = features;
-	}
 
 	@NotBlank
 	private String name;
@@ -76,7 +63,10 @@ public class LuthierEntity extends BaseEntity{
 	@OneToMany(mappedBy = "luthier")
 	private Set<LuthierFeatureEntity> features;
 	
-	
+	/**
+	 * 
+	 * @param instrument Instrument will be bound to Luthier
+	 */
 	public void addInstrument(InstrumentEntity instrument) {
 		
 		if(this.instruments == null) {
@@ -86,6 +76,11 @@ public class LuthierEntity extends BaseEntity{
 		this.instruments.add(instrument);
 	}
 	
+	/**
+	 * 
+	 * @param socialNetwork SocialNetwork will be bound to Luthier
+	 * @param link Link of social network
+	 */
 	public void addSocialNetwork(SocialNetworkEntity socialNetwork, String link) {
 		
 		if(this.socialNetworks == null) {
@@ -96,6 +91,10 @@ public class LuthierEntity extends BaseEntity{
 		this.socialNetworks.add(ls);
 	}
 	
+	/**
+	 * 
+	 * @param socialNetwork SocialNetwork will be bound to Luthier
+	 */
 	public void addSocialNetwork(LuthierSocialNetworkEntity socialNetwork) {
 		
 		if(this.socialNetworks == null) {
@@ -103,6 +102,21 @@ public class LuthierEntity extends BaseEntity{
 		}
 		
 		this.socialNetworks.add(socialNetwork);
+	}
+
+	/**
+	 * 
+	 * @param feature Feature will be bound to Luthier
+	 * @param value Feature's value
+	 */
+	public void addFeature(FeatureEntity feature, String value) {
+		
+		if(this.features == null) {
+			this.features = new HashSet<LuthierFeatureEntity>();
+		}
+		
+		LuthierFeatureEntity lf = new LuthierFeatureEntity(this,feature,value);
+		this.features.add(lf);
 	}
 
 }
