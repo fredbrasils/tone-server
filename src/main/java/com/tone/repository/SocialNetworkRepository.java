@@ -8,9 +8,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.tone.model.SocialNetworkEntity;
 import com.tone.model.enumm.StatusEnum;
 
-public interface SocialNetworkRepository extends PagingAndSortingRepository<SocialNetworkEntity, Long> {
+public interface SocialNetworkRepository extends BaseRepository<SocialNetworkEntity, Long> {
 
-	Optional<List<SocialNetworkEntity>> findOptionalByNameContainingIgnoreCase(String name);
-
-	Optional<List<SocialNetworkEntity>> findAllOptionalByStatus(StatusEnum status);
 }

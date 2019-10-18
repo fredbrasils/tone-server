@@ -52,51 +52,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 
 		return super.save(entity);
 	}
-	
-	/**
-	 * @param name Instrument's name
-	 * @return Instrument searched
-	 * 
-	 */
-	@Override
-	public Optional<List<InstrumentEntity>> findByName(String name) {
-		return this.instrumentRepository.findOptionalByNameContainingIgnoreCase(name);
-	}
 
-	/**
-	 * @return Instrument inactived
-	 */
-	@Override
-	public Set<InstrumentEntity> findInactive() {
-		return this.instrumentRepository.findAllOptionalByStatus(StatusEnum.INACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-	
-	/**
-	 * @return Instrument actived
-	 */
-	@Override
-	public Set<InstrumentEntity> findActive() {
-		return this.instrumentRepository.findAllOptionalByStatus(StatusEnum.ACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-
-	/**
-	 * @param entity Instrument that will be actived
-	 * @return Instrument actived
-	 * @throws BusinessException 
-	 */
-	public InstrumentEntity active(InstrumentEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.ACTIVE);
-	}
-	
-	/**
-	 * @param entity Instrument that will be inactived
-	 * @return Instrument inactived
-	 * @throws BusinessException 
-	 */
-	public InstrumentEntity inactive(InstrumentEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.INACTIVE);
-	}
-	
 	/**
 	 * @param instrument Instrument that will be actived or inactived
 	 * @param status The new Instrument's status 

@@ -57,57 +57,14 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 		}
 		return super.save(entity);
 	}
-	
-	/**
-	 * @param name SocialNetwork's name
-	 * @return SocialNetwork searched
-	 * 
-	 */
-	@Override
-	public Optional<List<SocialNetworkEntity>> findByName(String name) {
-		return this.socialNetworkRepository.findOptionalByNameContainingIgnoreCase(name);
-	}
 
-	/**
-	 * @return SocialNetwork inactived
-	 */
-	@Override
-	public Set<SocialNetworkEntity> findInactive() {
-		return this.socialNetworkRepository.findAllOptionalByStatus(StatusEnum.INACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-	
-	/**
-	 * @return SocialNetwork actived
-	 */
-	@Override
-	public Set<SocialNetworkEntity> findActive() {
-		return this.socialNetworkRepository.findAllOptionalByStatus(StatusEnum.ACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-
-	/**
-	 * @param entity SocialNetwork that will be actived
-	 * @return SocialNetwork actived
-	 * @throws BusinessException 
-	 */
-	public SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.ACTIVE);
-	}
-	
-	/**
-	 * @param entity SocialNetwork that will be inactived
-	 * @return SocialNetwork inactived
-	 * @throws BusinessException 
-	 */
-	public SocialNetworkEntity inactive(SocialNetworkEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.INACTIVE);
-	}
-	
 	/**
 	 * @param socialNetwork SocialNetwork that will be actived or inactived
 	 * @param status The new SocialNetwork's status 
 	 * @return SocialNetwork actived or inactived
 	 * @throws BusinessException 
 	 */
+	@Override
 	public SocialNetworkEntity activeOrInactive(SocialNetworkEntity socialNetwork, StatusEnum status) throws BusinessException{
 		
 		Optional<SocialNetworkEntity> socialNetworkSaved = findById(socialNetwork.getId());
