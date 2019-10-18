@@ -15,11 +15,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -28,13 +29,6 @@ public class SocialNetworkEntity extends BaseEntity{
 
 	@IgnoreField
 	private static final long serialVersionUID = 1L;
-	
-	@Builder
-	public SocialNetworkEntity(Long id, StatusEnum status, String name) {
-		super(id);
-		this.status = status;
-		this.name = name;
-	}
 
 	@Enumerated(EnumType.ORDINAL)
 	private StatusEnum status;
