@@ -10,13 +10,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.tone.model.FeatureEntity;
 import com.tone.model.enumm.StatusEnum;
 
-public interface FeatureRepository extends PagingAndSortingRepository<FeatureEntity, Long> {
+public interface FeatureRepository extends BaseRepository<FeatureEntity, Long> {
 
 	@EntityGraph(attributePaths = { "features" })
 	Optional<List<FeatureEntity>> findOptionalByNameContainingIgnoreCase(String name);
-	
-	Optional<List<FeatureEntity>> findAllOptionalByStatus(StatusEnum status);
-	
+
 	@Query("select f from FeatureEntity f left join fetch f.features where f.root is null")
 	Iterable<FeatureEntity> findAll();
 }
