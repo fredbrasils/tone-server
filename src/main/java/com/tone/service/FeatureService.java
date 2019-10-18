@@ -11,13 +11,5 @@ public interface FeatureService extends BaseService<FeatureEntity, Long>{
 
 	Optional<List<FeatureEntity>> findByName(String name);
 
-	Set<FeatureEntity> findActive();
-	
-	Set<FeatureEntity> findInactive();
-	
-	FeatureEntity active(FeatureEntity entity) throws BusinessException; 
-	
-	FeatureEntity inactive(FeatureEntity entity) throws BusinessException;
-
 	void changeOrder(FeatureEntity feature) throws BusinessException;
 }

@@ -12,12 +12,4 @@ public interface InstrumentService extends BaseService<InstrumentEntity, Long>{
 
 	Optional<List<InstrumentEntity>> findByName(String name);
 
-	Set<InstrumentEntity> findActive();
-	
-	Set<InstrumentEntity> findInactive();
-	
-	InstrumentEntity active(InstrumentEntity entity) throws BusinessException; 
-	
-	InstrumentEntity inactive(InstrumentEntity entity) throws BusinessException;
-	
 }

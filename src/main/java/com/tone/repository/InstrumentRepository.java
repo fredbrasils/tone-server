@@ -8,9 +8,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.tone.model.InstrumentEntity;
 import com.tone.model.enumm.StatusEnum;
 
-public interface InstrumentRepository extends PagingAndSortingRepository<InstrumentEntity, Long> {
+public interface InstrumentRepository extends BaseRepository<InstrumentEntity, Long> {
 
-	Optional<List<InstrumentEntity>> findOptionalByNameContainingIgnoreCase(String name);
-
-	Optional<List<InstrumentEntity>> findAllOptionalByStatus(StatusEnum status);
 }

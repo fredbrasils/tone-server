@@ -1,5 +1,6 @@
 package com.tone.service.impl;
 
+import com.tone.model.enumm.StatusEnum;
 import org.springframework.stereotype.Service;
 
 import com.tone.exception.BusinessException;
@@ -29,5 +30,10 @@ public class LuthierFeatureServiceImpl extends BaseServiceImpl<LuthierFeatureEnt
 		log.info("Save luthierFeature");
 		return super.save(entity);			
 	}
-	
+
+	@Override
+	public LuthierFeatureEntity activeOrInactive(LuthierFeatureEntity entity, StatusEnum status) throws BusinessException {
+		return null;
+	}
+
 }

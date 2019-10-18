@@ -6,7 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.tone.model.LuthierEntity;
 
-public interface LuthierRepository extends PagingAndSortingRepository<LuthierEntity, Long> {
+public interface LuthierRepository extends BaseRepository<LuthierEntity, Long> {
 
 	Optional<LuthierEntity> findOptionalByName(String name);
 }

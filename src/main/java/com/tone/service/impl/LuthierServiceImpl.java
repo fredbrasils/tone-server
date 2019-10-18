@@ -3,6 +3,7 @@ package com.tone.service.impl;
 import java.util.Optional;
 import java.util.Set;
 
+import com.tone.model.enumm.StatusEnum;
 import org.springframework.stereotype.Service;
 
 import com.tone.exception.BusinessException;
@@ -65,4 +66,10 @@ public class LuthierServiceImpl extends BaseServiceImpl<LuthierEntity,Long> impl
 		
 		super.delete(entity);
 	}
+
+	@Override
+	public LuthierEntity activeOrInactive(LuthierEntity entity, StatusEnum status) throws BusinessException {
+		return null;
+	}
+
 }

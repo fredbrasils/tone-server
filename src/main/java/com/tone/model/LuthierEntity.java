@@ -3,15 +3,10 @@ package com.tone.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.tone.model.enumm.StatusEnum;
 import com.tone.utils.IgnoreField;
 
 import lombok.AllArgsConstructor;
@@ -46,6 +41,9 @@ public class LuthierEntity extends BaseEntity{
 	private String phone;
 	
 	private String address;
+
+	@Enumerated(EnumType.ORDINAL)
+	private StatusEnum status = StatusEnum.ACTIVE;
 
 	@EqualsAndHashCode.Exclude
 	@OneToMany(mappedBy = "luthier")

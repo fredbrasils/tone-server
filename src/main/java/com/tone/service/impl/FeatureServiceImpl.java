@@ -85,56 +85,13 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 	}
 
 	/**
-	 * @param name Feature's name
-	 * @return Feature searched
-	 * 
-	 */
-	@Override
-	public Optional<List<FeatureEntity>> findByName(String name) {
-		return this.featureRepository.findOptionalByNameContainingIgnoreCase(name);
-	}	
-
-	/**
-	 * @return Feature inactived
-	 */
-	@Override
-	public Set<FeatureEntity> findInactive() {
-		return this.featureRepository.findAllOptionalByStatus(StatusEnum.INACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-	
-	/**
-	 * @return Feature actived
-	 */
-	@Override
-	public Set<FeatureEntity> findActive() {
-		return this.featureRepository.findAllOptionalByStatus(StatusEnum.ACTIVE).orElse(null).stream().collect(Collectors.toSet());
-	}
-
-	/**
-	 * @param entity Feature that will be actived
-	 * @return Feature actived
-	 * @throws BusinessException 
-	 */
-	public FeatureEntity active(FeatureEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.ACTIVE);
-	}
-	
-	/**
-	 * @param entity Feature that will be inactived
-	 * @return Feature inactived
-	 * @throws BusinessException 
-	 */
-	public FeatureEntity inactive(FeatureEntity entity) throws BusinessException{
-		return activeOrInactive(entity, StatusEnum.INACTIVE);
-	}
-	
-	/**
 	 * @param feature Feature that will be actived or inactived
 	 * @param status The new Feature's status 
 	 * @return Feature actived or inactived
 	 * @throws BusinessException 
 	 */
-	private FeatureEntity activeOrInactive(FeatureEntity feature, StatusEnum status) throws BusinessException{
+	@Override
+	public FeatureEntity activeOrInactive(FeatureEntity feature, StatusEnum status) throws BusinessException{
 		
 		Optional<FeatureEntity> featureSaved = findById(feature.getId());
 		FeatureEntity instr = null;
@@ -267,7 +224,6 @@ public class FeatureServiceImpl extends BaseServiceImpl<FeatureEntity,Long> impl
 		}else {
 			throw new BusinessException(MSG_ERROR_FEATURE_NOTFOUND);
 		}
-
 	}
 
 }

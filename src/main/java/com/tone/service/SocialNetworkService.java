@@ -11,12 +11,4 @@ public interface SocialNetworkService extends BaseService<SocialNetworkEntity, L
 
 	Optional<List<SocialNetworkEntity>> findByName(String name);
 
-	Set<SocialNetworkEntity> findActive();
-	
-	Set<SocialNetworkEntity> findInactive();
-	
-	SocialNetworkEntity active(SocialNetworkEntity entity) throws BusinessException; 
-	
-	SocialNetworkEntity inactive(SocialNetworkEntity entity) throws BusinessException;
-	
 }
