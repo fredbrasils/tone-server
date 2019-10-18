@@ -2,13 +2,15 @@ package com.tone.service.impl;
 
 
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import com.tone.model.FeatureEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -83,17 +85,15 @@ class InstrumentServiceImplTest {
 	@DisplayName("Find instrument by name")
 	@Test
 	void findByName() {
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
-		assertNotNull(instrument);		
+		Optional<List<InstrumentEntity>> instrument = instrumentService.findByName("Instrument 2");
+		assertNotNull(instrument.get());
 	}
 	
 	@DisplayName("Not Found instrument by name")
 	@Test
 	void notfoundInstrumentByName() {
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("guitar");
-		assertNull(instrument);		
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("guitar");
+		assertTrue(instrument.isEmpty());
 	}
 	
 	@DisplayName("Find instrument active")
@@ -122,9 +122,9 @@ class InstrumentServiceImplTest {
 		} catch (BusinessException e) {
 			fail();
 		}
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 4");
-		assertNotNull(instrument);		
+
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("Instrument 4");
+		assertTrue(instrument.isPresent());
 	}
 	
 	@DisplayName("Cant save an instrument with an exists name")
@@ -142,27 +142,29 @@ class InstrumentServiceImplTest {
 	
 	@DisplayName("Update instrument")
 	@Test
-	void update() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
-		instrument.setName("new instrument");
+	void update() {
+
+		Optional<List<InstrumentEntity>> instrument = instrumentService.findByName("Instrument 1");
+		instrument.get().get(0).setName("new instrument");
 		try {
-			instrumentService.save(instrument);
+			instrumentService.save(instrument.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
-		
-		assertNotNull(instrumentService.findOptionalByName("new instrument"));		
+
+		instrument = instrumentService.findByName("new instrument");
+		assertTrue(instrument.isPresent());
+
 	}
 	
 	@DisplayName("Cant update an instrument with an exists name")
 	@Test
-	void shouldntUpdateWithExistsName() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
-		instrument.setName("Instrument 2");
+	void shouldntUpdateWithExistsName() {
+
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("Instrument 1");
+		instrument.get().get(0).setName("Instrument 2");
 		try {
-			instrumentService.save(instrument);
+			instrumentService.save(instrument.get().get(0));
 			fail();
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST);
@@ -171,47 +173,47 @@ class InstrumentServiceImplTest {
 	
 	@DisplayName("Update an instrument with the same name")
 	@Test
-	void shouldUpdateWithSameName() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
-		instrument.setName("Instrument 1");
+	void shouldUpdateWithSameName() {
+
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("Instrument 1");
+		instrument.get().get(0).setName("Instrument 1");
 		try {
-			instrumentService.save(instrument);
+			instrumentService.save(instrument.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNotNull(instrumentService.findOptionalByName("Instrument 1"));
+		assertTrue(instrumentService.findByName("Instrument 1").isPresent());
 	}
 	
 	@DisplayName("Active an instrument")
 	@Test
-	void shouldActiveInstrument() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 2");
+	void shouldActiveInstrument() {
+
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("Instrument 2");
 		
 		try {
-			instrumentService.active(instrument);
+			instrumentService.active(instrument.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.ACTIVE, instrumentService.findOptionalByName("Instrument 2").getStatus());
+		assertEquals(StatusEnum.ACTIVE, instrumentService.findByName("Instrument 2").get().get(0).getStatus());
 	}
 	
 	@DisplayName("Inactive an instrument")
 	@Test
-	void shouldInactiveInstrument() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+	void shouldInactiveInstrument() {
+
+		Optional<List<InstrumentEntity>>  instrument = instrumentService.findByName("Instrument 1");
 		
 		try {
-			instrumentService.inactive(instrument);
+			instrumentService.inactive(instrument.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertEquals(StatusEnum.INACTIVE, instrumentService.findOptionalByName("Instrument 1").getStatus());
+		assertEquals(StatusEnum.INACTIVE, instrumentService.findByName("Instrument 1").get().get(0).getStatus());
 	}
 	
 	@DisplayName("Dont actived an instrument that doesn exist")
@@ -244,33 +246,33 @@ class InstrumentServiceImplTest {
 	
 	@DisplayName("Delete an instrument")
 	@Test
-	void shouldDeleteInstrument() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 1");
+	void shouldDeleteInstrument() {
+
+		Optional<List<InstrumentEntity>> instrument = instrumentService.findByName("Instrument 1");
 		
 		try {
-			instrumentService.delete(instrument);
+			instrumentService.delete(instrument.get().get(0));
 		} catch (BusinessException e) {
 			fail();
 		}
 		
-		assertNull(instrumentService.findOptionalByName("Instrument 1"));
+		assertTrue(instrumentService.findByName("Instrument 1").isEmpty());
 	}
 	
 	@DisplayName("Cant delete an instrument with luthier")
 	@Test
-	void shouldntDeleteInstrument() {		
-		
-		InstrumentEntity instrument = instrumentService.findOptionalByName("Instrument 3");
+	void shouldntDeleteInstrument() {
+
+		Optional<List<InstrumentEntity>> instrument = instrumentService.findByName("Instrument 3");
 		
 		try {
-			instrumentService.delete(instrument);
+			instrumentService.delete(instrument.get().get(0));
 			fail();
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER);
 		}
 		
-		assertNotNull(instrumentService.findOptionalByName("Instrument 3"));
+		assertTrue(instrumentService.findByName("Instrument 3").isPresent());
 	}
 	
 	@DisplayName("Cant delete an instrument without id")
