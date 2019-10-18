@@ -6,8 +6,10 @@ import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_SAVE;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_DELETE_BOUND_LUTHIER;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_DELETE;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -43,12 +45,16 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	public SocialNetworkEntity save(SocialNetworkEntity entity) throws BusinessException {
 
 		log.info("Save socialNetwork");
-		SocialNetworkEntity socialNetwork = this.findByName(entity.getName());
-		
-		if(socialNetwork != null && socialNetwork.getId() != entity.getId()) {
-			throw new BusinessException(MSG_ERROR_SOCIAL_NETWORK_EXIST);
+		Optional<List<SocialNetworkEntity>> instruments = this.findByName(entity.getName());
+
+		if(instruments.isPresent()) {
+
+			Predicate<SocialNetworkEntity> predicate = instrument -> !instrument.getId().equals(entity.getId());
+
+			if(instruments.get().stream().findFirst().filter(predicate).isPresent()) {
+				throw new BusinessException(MSG_ERROR_SOCIAL_NETWORK_EXIST);
+			}
 		}
-		
 		return super.save(entity);
 	}
 	
@@ -58,9 +64,9 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	 * 
 	 */
 	@Override
-	public SocialNetworkEntity findByName(String name) {
-		return this.socialNetworkRepository.findOptionalByNameIgnoreCase(name).orElse(null);
-	}	
+	public Optional<List<SocialNetworkEntity>> findByName(String name) {
+		return this.socialNetworkRepository.findOptionalByNameContainingIgnoreCase(name);
+	}
 
 	/**
 	 * @return SocialNetwork inactived
@@ -97,7 +103,7 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	}
 	
 	/**
-	 * @param entity SocialNetwork that will be actived or inactived
+	 * @param socialNetwork SocialNetwork that will be actived or inactived
 	 * @param status The new SocialNetwork's status 
 	 * @return SocialNetwork actived or inactived
 	 * @throws BusinessException 
@@ -123,7 +129,7 @@ public class SocialNetworkServiceImpl extends BaseServiceImpl<SocialNetworkEntit
 	}
 	
 	/**
-	 * @param entity SocialNetwork that will be deleted
+	 * @param socialNetwork SocialNetwork that will be deleted
 	 * @return
 	 * @throws BusinessException 
 	 */

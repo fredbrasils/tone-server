@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.tone.model.InstrumentEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -162,25 +163,31 @@ class SocialNetworkControllerTest extends AbstractRestControllerTest{
     @DisplayName(value="Find socialNetwork by name.") 
     @Test
     void findSocialNetworkByName() throws Exception {
-		
-    	SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("facebook").build();
-    	
-    	when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(socialNetworkEntity);    	
-    	
+
+        SocialNetworkEntity socialNetworkEntity = SocialNetworkEntity.builder().id(1l).name("facebook").build();
+        List<SocialNetworkEntity> list = new ArrayList<SocialNetworkEntity>();
+        list.add(socialNetworkEntity);
+
+        Optional<List<SocialNetworkEntity>> socialEntities = Optional.of(list);
+
+        when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(socialEntities);
+
         mockMvc.perform(get("/api/socialNetwork/facebook")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.object.name", equalTo(socialNetworkEntity.getName())))
-                .andExpect(jsonPath("$.object.id", equalTo(socialNetworkEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(1)))
                 ;        
     }
     
     @DisplayName(value="Not Found an socialNetwork by name.") 
     @Test
     void notFoundSocialNetworkByName() throws Exception {
-		
-    	when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(null);    	
+
+        Optional<List<SocialNetworkEntity>> socialEntities = Optional.empty();
+
+    	when(socialNetworkService.findByName(Mockito.anyString())).thenReturn(socialEntities);
     	
         mockMvc.perform(get("/api/socialNetwork/myspace")
         		.accept(MediaType.APPLICATION_JSON)

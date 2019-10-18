@@ -10,7 +10,7 @@ import com.tone.model.enumm.StatusEnum;
 
 public interface InstrumentRepository extends PagingAndSortingRepository<InstrumentEntity, Long> {
 
-	Optional<InstrumentEntity> findOptionalByNameIgnoreCase(String name);
-	
+	Optional<List<InstrumentEntity>> findOptionalByNameContainingIgnoreCase(String name);
+
 	Optional<List<InstrumentEntity>> findAllOptionalByStatus(StatusEnum status);
 }

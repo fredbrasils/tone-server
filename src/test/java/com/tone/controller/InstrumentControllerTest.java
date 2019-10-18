@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.tone.model.FeatureEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -162,25 +163,31 @@ class InstrumentControllerTest extends AbstractRestControllerTest{
     @DisplayName(value="Find instrument by name.") 
     @Test
     void findInstrumentByName() throws Exception {
-		
-    	InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").build();
-    	
-    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(instrumentEntity);    	
+
+        InstrumentEntity instrumentEntity = InstrumentEntity.builder().id(1l).name("guitar").build();
+        List<InstrumentEntity> list = new ArrayList<InstrumentEntity>();
+        list.add(instrumentEntity);
+
+        Optional<List<InstrumentEntity>> instrumentsEntities = Optional.of(list);
+
+    	when(instrumentService.findByName(Mockito.anyString())).thenReturn(instrumentsEntities);
     	
         mockMvc.perform(get("/api/instrument/guitar")
         		.accept(MediaType.APPLICATION_JSON)
         		.contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.object.name", equalTo(instrumentEntity.getName())))
-                .andExpect(jsonPath("$.object.id", equalTo(instrumentEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(1)))
                 ;        
     }
     
     @DisplayName(value="Not Found an instrument by name.") 
     @Test
     void notFoundInstrumentByName() throws Exception {
-		
-    	when(instrumentService.findOptionalByName(Mockito.anyString())).thenReturn(null);    	
+
+        Optional<List<InstrumentEntity>> instrumentsEntities = Optional.empty();
+
+    	when(instrumentService.findByName(Mockito.anyString())).thenReturn(instrumentsEntities);
     	
         mockMvc.perform(get("/api/instrument/batuque")
         		.accept(MediaType.APPLICATION_JSON)

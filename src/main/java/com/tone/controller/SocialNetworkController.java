@@ -3,7 +3,9 @@ package com.tone.controller;
 import static com.tone.utils.ConstantsMessages.MSG_ERROR_SOCIAL_NETWORK_NOTFOUND;
 import static com.tone.utils.ConstantsMessages.NOTBLANK_SOCIAL_NETWORK_ID;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,14 +106,21 @@ public class SocialNetworkController extends BaseController{
 	  
     	log.debug("socialNetworkController:findSocialNetworkByName");
     		     
-	   SocialNetworkEntity socialNetworkEntity = socialNetworkService.findByName(name);
-	    
-	   if(socialNetworkEntity != null) {
-		   SocialNetwork socialNetwork = (SocialNetwork) Utils.convertFromTo(socialNetworkEntity, SocialNetwork.class);
-		   return ResponseEntity.ok(messageSuccess(socialNetwork, request, new String[] {ConstantsMessages.SUCCESS}, null));
-	   }else {
-		   return messageError(request, new String[] {MSG_ERROR_SOCIAL_NETWORK_NOTFOUND}, null);
-	   }	    
+		Optional<List<SocialNetworkEntity>> socialNetworkEntity = socialNetworkService.findByName(name);
+
+		if(socialNetworkEntity.isPresent()) {
+			List<SocialNetworkEntity> list = socialNetworkEntity.get();
+			List<SocialNetwork> listInstrument = new ArrayList<SocialNetwork>();
+
+			for(SocialNetworkEntity entity : list) {
+				listInstrument.add((SocialNetwork) Utils.convertFromTo(entity, SocialNetwork.class));
+			}
+
+			return ResponseEntity.ok(messageSuccess(listInstrument, request, new String[] {ConstantsMessages.SUCCESS}, null));
+
+		}else {
+			return messageError(request, new String[] {MSG_ERROR_SOCIAL_NETWORK_NOTFOUND}, null);
+		}
     }
     
     /**

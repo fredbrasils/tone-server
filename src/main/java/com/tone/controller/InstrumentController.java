@@ -1,14 +1,15 @@
 package com.tone.controller;
 
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
-import static com.tone.utils.ConstantsMessages.NOTBLANK_INSTRUMENT_ID;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.tone.model.FeatureEntity;
+import com.tone.model.payload.Feature;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -30,6 +31,8 @@ import com.tone.utils.ConstantsMessages;
 import com.tone.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @RestController
@@ -103,15 +106,23 @@ public class InstrumentController extends BaseController{
 	public ResponseEntity<?> findInstrumentByName(@PathVariable String name, HttpServletRequest request) {
 	  
     	log.debug("instrumentController:findInstrumentByName");
-    		     
-	   InstrumentEntity instrumentEntity = instrumentService.findOptionalByName(name);
-	    
-	   if(instrumentEntity != null) {
-		   Instrument instrument = (Instrument) Utils.convertFromTo(instrumentEntity, Instrument.class);
-		   return ResponseEntity.ok(messageSuccess(instrument, request, new String[] {ConstantsMessages.SUCCESS}, null));
-	   }else {
-		   return messageError(request, new String[] {MSG_ERROR_INSTRUMENT_NOTFOUND}, null);
-	   }	    
+
+    	Optional<List<InstrumentEntity>> instrumentEntity = instrumentService.findByName(name);
+
+		if(instrumentEntity.isPresent()) {
+			List<InstrumentEntity> list = instrumentEntity.get();
+			List<Instrument> listInstrument = new ArrayList<Instrument>();
+
+			for(InstrumentEntity entity : list) {
+				listInstrument.add((Instrument) Utils.convertFromTo(entity, Instrument.class));
+			}
+
+			return ResponseEntity.ok(messageSuccess(listInstrument, request, new String[] {ConstantsMessages.SUCCESS}, null));
+
+		}else {
+			return messageError(request, new String[] {MSG_ERROR_FEATURE_NOTFOUND}, null);
+		}
+
     }
     
     /**
