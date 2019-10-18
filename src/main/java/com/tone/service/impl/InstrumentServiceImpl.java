@@ -1,15 +1,12 @@
 package com.tone.service.impl;
 
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_EXIST;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_NOTFOUND;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_SAVE;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE_BOUND_LUTHIER;
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_INSTRUMENT_DELETE;
-
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.tone.model.FeatureEntity;
 import org.springframework.stereotype.Service;
 
 import com.tone.exception.BusinessException;
@@ -19,6 +16,8 @@ import com.tone.repository.InstrumentRepository;
 import com.tone.service.InstrumentService;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @Service
@@ -31,7 +30,6 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 		this.instrumentRepository = instrumentRepository;
 	}
 
-	
 	/**
 	 * @param entity Instrument that will be save
 	 * @return Instrument saved
@@ -41,12 +39,17 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	public InstrumentEntity save(InstrumentEntity entity) throws BusinessException {
 
 		log.info("Save instrument");
-		InstrumentEntity instrument = this.findOptionalByName(entity.getName());
-		
-		if(instrument != null && instrument.getId() != entity.getId()) {
-			throw new BusinessException(MSG_ERROR_INSTRUMENT_EXIST);
+		Optional<List<InstrumentEntity>> instruments = this.findByName(entity.getName());
+
+		if(instruments.isPresent()) {
+
+			Predicate<InstrumentEntity> predicate = instrument -> !instrument.getId().equals(entity.getId());
+
+			if(instruments.get().stream().findFirst().filter(predicate).isPresent()) {
+				throw new BusinessException(MSG_ERROR_INSTRUMENT_EXIST);
+			}
 		}
-		
+
 		return super.save(entity);
 	}
 	
@@ -56,9 +59,9 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	 * 
 	 */
 	@Override
-	public InstrumentEntity findOptionalByName(String name) {
-		return this.instrumentRepository.findOptionalByNameIgnoreCase(name).orElse(null);
-	}	
+	public Optional<List<InstrumentEntity>> findByName(String name) {
+		return this.instrumentRepository.findOptionalByNameContainingIgnoreCase(name);
+	}
 
 	/**
 	 * @return Instrument inactived
@@ -95,7 +98,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	}
 	
 	/**
-	 * @param entity Instrument that will be actived or inactived
+	 * @param instrument Instrument that will be actived or inactived
 	 * @param status The new Instrument's status 
 	 * @return Instrument actived or inactived
 	 * @throws BusinessException 
@@ -121,7 +124,7 @@ public class InstrumentServiceImpl extends BaseServiceImpl<InstrumentEntity,Long
 	}
 	
 	/**
-	 * @param entity Instrument that will be deleted
+	 * @param instrument Instrument that will be deleted
 	 * @return
 	 * @throws BusinessException 
 	 */
