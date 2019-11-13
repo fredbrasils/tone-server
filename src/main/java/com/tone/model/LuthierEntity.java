@@ -117,4 +117,16 @@ public class LuthierEntity extends BaseEntity{
 		this.features.add(lf);
 	}
 
+	/**
+	 *
+	 * @param feature Feature will be bound to Luthier
+	 */
+	public void addFeature(LuthierFeatureEntity feature) {
+
+		if(this.features == null) {
+			this.features = new HashSet<LuthierFeatureEntity>();
+		}
+
+		this.features.add(feature);
+	}
 }

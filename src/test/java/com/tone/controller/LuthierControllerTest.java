@@ -19,6 +19,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.tone.exception.BusinessException;
+import com.tone.model.FeatureEntity;
+import com.tone.model.enumm.StatusEnum;
+import com.tone.model.payload.Feature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,17 +58,95 @@ class LuthierControllerTest extends AbstractRestControllerTest{
 
     @BeforeEach
     void setUp() {
+
+        LuthierEntity luthier1 = LuthierEntity.builder().name("Luthier 1").email("luthier1@tone.com").status(StatusEnum.ACTIVE).build();
+        LuthierEntity luthier2 = LuthierEntity.builder().name("Luthier 2").email("luthier2@tone.com").status(StatusEnum.INACTIVE).build();
+
     	luthiers = new ArrayList<LuthierEntity>();
-    	luthiers.add(LuthierEntity.builder().id(1l).name("Luthier 1").build());
-    	luthiers.add(LuthierEntity.builder().id(2l).name("Luthier 2").build());
+    	luthiers.add(luthier1);
+    	luthiers.add(luthier2);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(luthierController)
                 .build();
-    }    
-    
-    //Just replace the .p2 version of the hamcrest jar by the maven hamcrest-core 1.3.
-    
+    }
+
+    @DisplayName(value="Create a new luthier")
+    @Test
+    void registerLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("luthier").email("luthier1@tone.com").build();
+        LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("home").email("luthier1@tone.com").status(StatusEnum.ACTIVE).build();
+
+        when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
+
+        mockMvc.perform(post("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(luthierEntity.getStatus().name())))
+        ;
+
+        verify(luthierService).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont create a new luthier without name")
+    @Test
+    void dontRegisterLuthierWithoutName() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("").email("luthier1@tone.com").build();
+
+        mockMvc.perform(post("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier)))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(0)).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont create a new luthier without email")
+    @Test
+    void dontRegisterLuthierWithoutEmail() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("luthier").email("").build();
+
+        mockMvc.perform(post("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier)))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(0)).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont create the same luthier ")
+    @Test
+    void dontRegisterTheSameLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("luthier").email("luthier1@tone.com").build();
+
+        when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenThrow(BusinessException.class);
+
+        mockMvc.perform(post("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(1)).save(ArgumentMatchers.any());
+
+    }
+/*
     @DisplayName(value="Find all luthiers.") 
     @Test
     void findAllLuthiers() throws Exception {
@@ -80,45 +162,7 @@ class LuthierControllerTest extends AbstractRestControllerTest{
                 .andExpect(jsonPath("$", hasSize(2)))
                 ;        
     }
-    
-    @DisplayName(value="Create a new luthier")
-    @Test
-    void registerLuthier() throws Exception {
-    	
-    	Luthier luthier = Luthier.builder().name("home").build();
-    	LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("home").build();
-    	
-    	when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
 
-        mockMvc.perform(post("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON)        		
-        		.content(asJsonString(luthier))).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
-                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
-                ;
-
-        verify(luthierService).save(ArgumentMatchers.any());
-
-    }
-    
-    @DisplayName(value="Dont create a new luthier")
-    @Test
-    void dontRegisterLuthier() throws Exception {
-    	
-    	Luthier luthier = Luthier.builder().name("").build();
-
-        mockMvc.perform(post("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON)
-        		.content(asJsonString(luthier)))
-                .andExpect(status().isBadRequest())                
-                ;
-
-        verify(luthierService, times(0)).save(ArgumentMatchers.any());
-
-    }
 
     @DisplayName(value="Update luthier")
     @Test
@@ -192,5 +236,5 @@ class LuthierControllerTest extends AbstractRestControllerTest{
         verify(luthierService).delete(ArgumentMatchers.any());
 
     }
-    
+    */
 }

@@ -8,5 +8,5 @@ import com.tone.model.LuthierEntity;
 
 public interface LuthierRepository extends BaseRepository<LuthierEntity, Long> {
 
-	Optional<LuthierEntity> findOptionalByName(String name);
+	Optional<LuthierEntity> findOptionalByEmail(String email);
 }
