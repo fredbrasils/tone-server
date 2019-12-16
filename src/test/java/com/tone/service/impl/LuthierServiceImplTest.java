@@ -1,6 +1,7 @@
 package com.tone.service.impl;
 
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -287,6 +288,93 @@ class LuthierServiceImplTest {
 		assertEquals(1,luthier.getSocialNetworks().size());
 	}
 
+	@Transactional
+	@DisplayName("Update email luthier")
+	@Test
+	void updateEmailLuthier() {
+
+		LuthierEntity luthier1 = luthierService.findOptionalByEmail("luthier1@tone.com");
+		luthier1.setEmail("newEmailLuthier1@tone.com");
+
+		try {
+			luthierService.save(luthier1);
+		} catch (BusinessException e) {
+		}
+
+		LuthierEntity luthier = luthierService.findOptionalByEmail("luthier1@tone.com");
+		assertNull(luthier);
+
+		luthier = luthierService.findOptionalByEmail("newEmailLuthier1@tone.com");
+		assertNotNull(luthier);
+	}
+
+	@Transactional
+	@DisplayName("Update social network from luthier")
+	@Test
+	void updateSocialNetworkFromLuthier() {
+
+		LuthierEntity luthier1 = luthierService.findOptionalByEmail("luthier1@tone.com");
+		luthier1.addSocialNetwork(socialNetworkService.findByName("Facebook").get().get(0),"facebook/luthier");
+
+		try {
+			luthierService.save(luthier1);
+		} catch (BusinessException e) {
+		}
+
+		LuthierEntity luthier = luthierService.findOptionalByEmail("luthier1@tone.com");
+
+		assertNotNull(luthier);
+		assertEquals(1,luthier.getSocialNetworks().size());
+
+		luthier1.setSocialNetworks(null);
+		luthier1.addSocialNetwork(socialNetworkService.findByName("Instagram").get().get(0),"instagram/luthier");
+
+		try {
+			luthierService.save(luthier1);
+		} catch (BusinessException e) {
+		}
+
+		luthier = luthierService.findOptionalByEmail("luthier1@tone.com");
+		assertEquals(1,luthier.getSocialNetworks().size());
+
+		luthier.getSocialNetworks().forEach(sn ->
+				assertEquals("instagram/luthier",sn.getLink()));
+
+	}
+
+	@Transactional
+	@DisplayName("Update feature from luthier")
+	@Test
+	void updateFeatureFromLuthier() {
+
+		LuthierEntity luthier1 = luthierService.findOptionalByEmail("luthier1@tone.com");
+		luthier1.addFeature(featureService.findByName("101-200").get().get(0), "200");
+
+		try {
+			luthierService.save(luthier1);
+		} catch (BusinessException e) {
+		}
+
+		LuthierEntity luthier = luthierService.findOptionalByEmail("luthier1@tone.com");
+		assertNotNull(luthier);
+		assertEquals(1,luthier.getFeatures().size());
+
+		luthier1.setFeatures(null);
+		luthier1.addFeature(featureService.findByName("0-100").get().get(0), "80");
+
+		try {
+			luthierService.save(luthier1);
+		} catch (BusinessException e) {
+		}
+
+		luthier = luthierService.findOptionalByEmail("luthier1@tone.com");
+		assertEquals(1,luthier.getFeatures().size());
+
+		luthier.getFeatures().forEach(f ->
+				assertEquals("80",f.getValue()));
+
+	}
+
 	/*
 	@DisplayName("Find all luthier")
 	@Test
@@ -305,19 +393,6 @@ class LuthierServiceImplTest {
 		LuthierEntity luthier = luthierService.findOptionalByName("Luthier 2");
 		assertNotNull(luthier);		
 	}
-	
-	@DisplayName("Update luthier")
-	@Test
-	void update() {		
-		
-		LuthierEntity luthier = luthierService.findOptionalByName("Luthier 1");
-		luthier.setName("new luthier");
-		try {
-			luthierService.save(luthier);
-		} catch (BusinessException e) {
-		}
-		
-		assertNotNull(luthierService.findOptionalByName("new luthier"));		
-	}
+
 	*/
 }

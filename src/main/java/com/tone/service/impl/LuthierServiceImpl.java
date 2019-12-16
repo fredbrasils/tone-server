@@ -12,6 +12,7 @@ import com.tone.service.LuthierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,6 +52,17 @@ public class LuthierServiceImpl extends BaseServiceImpl<LuthierEntity,Long> impl
 
 		if(luthier.isPresent() && !luthier.get().getId().equals(entity.getId())) {
 			throw new BusinessException(MSG_ERROR_LUTHIER_EXIST);
+		}else if(luthier.isPresent()){
+
+			if(luthier.get().getSocialNetworks() != null && !luthier.get().getSocialNetworks().isEmpty()){
+				Optional<List<LuthierSocialNetworkEntity>> list = luthierSocialNetworkRepository.findAllOptionalByLuthier(luthier.get());
+				list.ifPresent( listls -> listls.forEach(ls -> luthierSocialNetworkRepository.delete(ls)));
+			}
+
+			if(luthier.get().getFeatures() != null && !luthier.get().getFeatures().isEmpty()){
+				Optional<List<LuthierFeatureEntity>> list = luthierFeatureRepository.findAllOptionalByLuthier(luthier.get());
+				list.ifPresent( listlf -> listlf.forEach(lf -> luthierFeatureRepository.delete(lf)));
+			}
 		}
 
 		Set<LuthierSocialNetworkEntity> listSocial = entity.getSocialNetworks();

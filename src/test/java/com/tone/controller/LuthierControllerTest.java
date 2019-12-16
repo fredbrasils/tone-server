@@ -146,6 +146,97 @@ class LuthierControllerTest extends AbstractRestControllerTest{
         verify(luthierService, times(1)).save(ArgumentMatchers.any());
 
     }
+
+    @DisplayName(value="Update luthier")
+    @Test
+    void updateLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier1").email("luthier1@tone.com").build();
+        LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("luthier1").email("luthier1@tone.com").build();
+
+        when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
+
+        mockMvc.perform(put("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
+        ;
+
+        verify(luthierService).save(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Dont Update luthier without name")
+    @Test
+    void dontUpdateLuthierWithoutName() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("").email("luthier1@tone.com").build();
+
+        mockMvc.perform(put("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier)))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(0)).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont Update luthier without id")
+    @Test
+    void dontUpdateLuthierWithoutId() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("Luthier").email("luthier1@tone.com").build();
+
+        mockMvc.perform(put("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier)))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(0)).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont Update luthier without email")
+    @Test
+    void dontUpdateLuthierWithoutEmail() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("Luthier").build();
+
+        mockMvc.perform(put("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier)))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(0)).save(ArgumentMatchers.any());
+
+    }
+
+    @DisplayName(value="Dont update luthier ")
+    @Test
+    void dontUpdateLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier").email("luthier1@tone.com").build();
+
+        when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenThrow(BusinessException.class);
+
+        mockMvc.perform(put("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(luthierService, times(1)).save(ArgumentMatchers.any());
+
+    }
 /*
     @DisplayName(value="Find all luthiers.") 
     @Test
@@ -164,61 +255,7 @@ class LuthierControllerTest extends AbstractRestControllerTest{
     }
 
 
-    @DisplayName(value="Update luthier")
-    @Test
-    void updateLuthier() throws Exception {
-    	
-    	Luthier luthier = Luthier.builder().id(1l).name("home").build();
-    	LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("home").build();
-    	
-    	when(luthierService.save(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
 
-        mockMvc.perform(put("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON)        		
-        		.content(asJsonString(luthier))).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
-                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
-                ;
-
-        verify(luthierService).save(ArgumentMatchers.any());
-
-    }
-    
-    @DisplayName(value="Dont Update luthier without name")
-    @Test
-    void dontUpdateLuthierWithoutName() throws Exception {
-    	
-    	Luthier luthier = Luthier.builder().id(1l).name("").build();
-
-        mockMvc.perform(put("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON)
-        		.content(asJsonString(luthier)))
-                .andExpect(status().isBadRequest())                
-                ;
-
-        verify(luthierService, times(0)).save(ArgumentMatchers.any());
-
-    }
-    
-    @DisplayName(value="Dont Update luthier without id")
-    @Test
-    void dontUpdateLuthierWithoutId() throws Exception {
-    	
-    	Luthier luthier = Luthier.builder().name("Luthier").build();
-
-        mockMvc.perform(put("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON)
-        		.content(asJsonString(luthier)))
-                .andExpect(status().isBadRequest())                
-                ;
-
-        verify(luthierService, times(0)).save(ArgumentMatchers.any());
-
-    }
     
     @DisplayName(value="Delete luthier")
     @Test
