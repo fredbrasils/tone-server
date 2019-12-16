@@ -408,4 +408,62 @@ class LuthierServiceImplTest {
 		Set<LuthierEntity> luthier = luthierService.findInactive();
 		assertEquals(1, luthier.size());
 	}
+
+	@DisplayName("Active an luthier")
+	@Test
+	void shouldActiveLuthier() {
+
+		Optional<List<LuthierEntity>>  luthier = luthierService.findByName("Luthier 2");
+
+		try {
+			luthierService.active(luthier.get().get(0));
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		assertEquals(StatusEnum.ACTIVE, luthierService.findByName("Luthier 2").get().get(0).getStatus());
+	}
+
+	@DisplayName("Inactive an luthier")
+	@Test
+	void shouldInactiveLuthier() {
+
+		Optional<List<LuthierEntity>>  luthier = luthierService.findByName("Luthier 99");
+
+		try {
+			luthierService.inactive(luthier.get().get(0));
+		} catch (BusinessException e) {
+			fail();
+		}
+
+		assertEquals(StatusEnum.INACTIVE, luthierService.findByName("Luthier 99").get().get(0).getStatus());
+	}
+
+	@DisplayName("Dont actived an luthier that doesn exist")
+	@Test
+	void shouldntActiveLuthierThatDoesntExist() {
+
+		LuthierEntity luthier = LuthierEntity.builder().id(99l).build();
+
+		try {
+			luthierService.active(luthier);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_LUTHIER_NOTFOUND);
+		}
+	}
+
+	@DisplayName("Dont inactived an luthier that doesn exist")
+	@Test
+	void shouldntInactiveLuthierThatDoesntExist() {
+
+		LuthierEntity luthier = LuthierEntity.builder().id(99l).build();
+
+		try {
+			luthierService.inactive(luthier);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_LUTHIER_NOTFOUND);
+		}
+	}
 }

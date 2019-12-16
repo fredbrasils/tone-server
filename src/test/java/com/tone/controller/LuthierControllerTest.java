@@ -2,6 +2,8 @@ package com.tone.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,10 +19,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.tone.exception.BusinessException;
-import com.tone.model.FeatureEntity;
+import com.tone.model.*;
 import com.tone.model.LuthierEntity;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.model.payload.Feature;
+import com.tone.model.payload.Luthier;
+import com.tone.utils.ConstantsMessages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -362,6 +366,122 @@ class LuthierControllerTest extends AbstractRestControllerTest{
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest())
         ;
+    }
+
+    @DisplayName(value="Active luthier")
+    @Test
+    void activeLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier").email("luthier@tone.com").status(StatusEnum.INACTIVE).build();
+        LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("luthier").email("luthier@tone.com").status(StatusEnum.ACTIVE).build();
+
+        when(luthierService.active(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
+
+        mockMvc.perform(put("/api/luthier/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(luthierEntity.getStatus().name())))
+        ;
+
+        verify(luthierService).active(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Inactive luthier")
+    @Test
+    void inactiveLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier").email("luthier@tone.com").status(StatusEnum.ACTIVE).build();
+        LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).email("luthier@tone.com").name("luthier").status(StatusEnum.INACTIVE).build();
+
+        when(luthierService.inactive(ArgumentMatchers.any(LuthierEntity.class))).thenReturn(luthierEntity);
+
+        mockMvc.perform(put("/api/luthier/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.object.name", equalTo(luthierEntity.getName())))
+                .andExpect(jsonPath("$.object.id", equalTo(luthierEntity.getId().intValue())))
+                .andExpect(jsonPath("$.object.status", equalTo(luthierEntity.getStatus().name())))
+        ;
+
+        verify(luthierService).inactive(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Doesnt active luthier that doesnt exist")
+    @Test
+    void shouldntActiveLuthierThatDoesntExist() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("luthier").email("luthier@tone.com").status(StatusEnum.INACTIVE).build();
+
+        mockMvc.perform(put("/api/luthier/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(luthierService, times(0)).active(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Doesnt inactive luthier that doesnt exist")
+    @Test
+    void shouldntInactiveLuthierThatDoesntExist() throws Exception {
+
+        Luthier luthier = Luthier.builder().name("luthier").email("luthier@tone.com").status(StatusEnum.ACTIVE).build();
+
+        mockMvc.perform(put("/api/luthier/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(luthierService, times(0)).inactive(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Throw exception when try active luthier")
+    @Test
+    void shouldTrowExceptionActiveLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier").email("luthier@tone.com").status(StatusEnum.INACTIVE).build();
+
+        when(luthierService.active(ArgumentMatchers.any(LuthierEntity.class))).thenThrow(BusinessException.class);
+
+        mockMvc.perform(put("/api/luthier/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(luthierService).active(ArgumentMatchers.any());
+    }
+
+    @DisplayName(value="Throw exception when try inactive luthier")
+    @Test
+    void shouldTrowExceptionInactiveLuthier() throws Exception {
+
+        Luthier luthier = Luthier.builder().id(1l).name("luthier").email("luthier@tone.com").status(StatusEnum.ACTIVE).build();
+
+        when(luthierService.inactive(ArgumentMatchers.any(LuthierEntity.class))).thenThrow(BusinessException.class);
+
+        mockMvc.perform(put("/api/luthier/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(luthier))).andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success", equalTo(false)))
+        ;
+
+        verify(luthierService).inactive(ArgumentMatchers.any());
     }
 /*
 

@@ -2,6 +2,7 @@ package com.tone.service.impl;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.LuthierEntity;
+import com.tone.model.LuthierEntity;
 import com.tone.model.LuthierFeatureEntity;
 import com.tone.model.LuthierSocialNetworkEntity;
 import com.tone.model.enumm.StatusEnum;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.tone.utils.ConstantsMessages.MSG_ERROR_LUTHIER_EXIST;
+import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @Service
@@ -70,7 +71,11 @@ public class LuthierServiceImpl extends BaseServiceImpl<LuthierEntity,Long> impl
 		entity.setSocialNetworks(null);
 		entity.setFeatures(null);
 
-		entity = super.save(entity);
+		try {
+			entity = super.save(entity);
+		} catch (BusinessException e) {
+			throw new BusinessException(MSG_ERROR_LUTHIER_SAVE);
+		}
 
 		if(listSocial != null && !listSocial.isEmpty()) {
 			for(LuthierSocialNetworkEntity social : listSocial) {
@@ -108,8 +113,24 @@ public class LuthierServiceImpl extends BaseServiceImpl<LuthierEntity,Long> impl
 	}
 
 	@Override
-	public LuthierEntity activeOrInactive(LuthierEntity entity, StatusEnum status) throws BusinessException {
-		return null;
+	public LuthierEntity activeOrInactive(LuthierEntity luthier, StatusEnum status) throws BusinessException {
+
+		Optional<LuthierEntity> luthierSaved = findById(luthier.getId());
+		LuthierEntity lut = null;
+
+		if(luthierSaved.isPresent()) {
+			lut = luthierSaved.get();
+			lut.setStatus(status);
+			try {
+				lut = save(lut);
+			} catch (BusinessException e) {
+				throw new BusinessException(MSG_ERROR_LUTHIER_SAVE);
+			}
+		}else {
+			throw new BusinessException(MSG_ERROR_LUTHIER_NOTFOUND);
+		}
+
+		return lut;
 	}
 
 }

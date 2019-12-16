@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.tone.model.InstrumentEntity;
-import com.tone.model.payload.Instrument;
+import com.tone.model.LuthierEntity;
+import com.tone.model.payload.Luthier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -183,4 +183,56 @@ public class LuthierController extends BaseController{
 
     	return ResponseEntity.ok(messageSuccess(null, request, new String[] {ConstantsMessages.SUCCESS}, null));
     }
+
+	/**
+	 *
+	 * @param luthier Luthier that will be actived
+	 * @param request
+	 * @return return luthier actived
+	 */
+	@PutMapping("/active")
+	public ResponseEntity<GenericResponse> active(@RequestBody Luthier luthier, HttpServletRequest request) {
+
+		Luthier luthierSaved = null;
+
+		if (luthier.getId() != null) {
+
+			try {
+				LuthierEntity luthierEntity = (LuthierEntity) Utils.convertFromTo(luthier, LuthierEntity.class);
+				luthierSaved = (Luthier) Utils.convertFromTo(luthierService.active(luthierEntity), Luthier.class);
+			} catch (BusinessException e) {
+				return messageError(request, new String[] {e.getMessage()}, null);
+			}
+		}else {
+			return messageError(request, new String[] {NOTBLANK_LUTHIER_ID}, null);
+		}
+
+		return ResponseEntity.ok(messageSuccess(luthierSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	}
+
+	/**
+	 *
+	 * @param luthier Luthier that will be inactived
+	 * @param request
+	 * @return return luthier inactived
+	 */
+	@PutMapping("/inactive")
+	public ResponseEntity<GenericResponse> inactive(@RequestBody Luthier luthier, HttpServletRequest request) {
+
+		Luthier luthierSaved = null;
+
+		if (luthier.getId() != null) {
+
+			try {
+				LuthierEntity luthierEntity = (LuthierEntity) Utils.convertFromTo(luthier, LuthierEntity.class);
+				luthierSaved = (Luthier) Utils.convertFromTo(luthierService.inactive(luthierEntity), Luthier.class);
+			} catch (BusinessException e) {
+				return messageError(request, new String[] {e.getMessage()}, null);
+			}
+		}else {
+			return messageError(request, new String[] {NOTBLANK_LUTHIER_ID}, null);
+		}
+
+		return ResponseEntity.ok(messageSuccess(luthierSaved, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	}
 }

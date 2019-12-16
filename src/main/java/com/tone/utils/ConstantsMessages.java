@@ -9,6 +9,7 @@ public class ConstantsMessages {
 	public static final String NOTBLANK_LUTHIER_NAME = "NotBlank.luthier.name";
 	public static final String MSG_ERROR_LUTHIER_EXIST = "msg.error.luthier.exist";
 	public static final String MSG_ERROR_LUTHIER_NOTFOUND = "msg.error.luthier.notfound";
+	public static final String MSG_ERROR_LUTHIER_SAVE = "msg.error.luthier.save";
 
 	// INSTRUMENT
 	public static final String MSG_ERROR_INSTRUMENT_EXIST = "msg.error.instrument.exist";
