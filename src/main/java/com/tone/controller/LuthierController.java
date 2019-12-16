@@ -1,23 +1,20 @@
 package com.tone.controller;
 
-import static com.tone.utils.ConstantsMessages.NOTBLANK_LUTHIER_ID;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.tone.model.InstrumentEntity;
+import com.tone.model.payload.Instrument;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.LuthierEntity;
@@ -28,6 +25,8 @@ import com.tone.utils.ConstantsMessages;
 import com.tone.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @RestController
@@ -53,7 +52,69 @@ public class LuthierController extends BaseController{
         return ResponseEntity.ok(listLuthiers);
     
     }
-    
+
+	/**
+	 * @param request
+	 * @return Return all luthier actived
+	 */
+	@SuppressWarnings("unchecked")
+	@GetMapping("/active")
+	public ResponseEntity<?> findLuthiersActive(HttpServletRequest request) {
+
+		log.debug("luthierController:findLuthiersActive");
+
+		Set<LuthierEntity> list = luthierService.findActive();
+
+		Set<Luthier> listLuthier = Utils.convertFromTo(list, Luthier.class);
+
+		return ResponseEntity.ok(messageSuccess(listLuthier, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	}
+
+	/**
+	 * @param request
+	 * @return Return all luthiers inactived
+	 */
+	@SuppressWarnings("unchecked")
+	@GetMapping("/inactive")
+	public ResponseEntity<?> findLuthiersInactive(HttpServletRequest request) {
+
+		log.debug("luthierController:findLuthiersInactive");
+
+		Set<LuthierEntity> list = luthierService.findInactive();
+
+		Set<Luthier> listLuthier = Utils.convertFromTo(list, Luthier.class);
+
+		return ResponseEntity.ok(messageSuccess(listLuthier, request, new String[] {ConstantsMessages.SUCCESS}, null));
+	}
+
+	/**
+	 * @param name Luthier's name
+	 * @param request
+	 * @return Return the luthier required
+	 */
+	@GetMapping("/{name}")
+	public ResponseEntity<?> findLuthierByName(@PathVariable String name, HttpServletRequest request) {
+
+		log.debug("luthierController:findLuthierByName");
+
+		Optional<List<LuthierEntity>> luthierEntity = luthierService.findByName(name);
+
+		if(luthierEntity.isPresent()) {
+			List<LuthierEntity> list = luthierEntity.get();
+			List<Luthier> listLuthier = new ArrayList<Luthier>();
+
+			for(LuthierEntity entity : list) {
+				listLuthier.add((Luthier) Utils.convertFromTo(entity, Luthier.class));
+			}
+
+			return ResponseEntity.ok(messageSuccess(listLuthier, request, new String[] {ConstantsMessages.SUCCESS}, null));
+
+		}else {
+			return messageError(request, new String[] {MSG_ERROR_LUTHIER_NOTFOUND}, null);
+		}
+
+	}
+
     @PostMapping
     public ResponseEntity<GenericResponse> createluthier(@Valid @RequestBody Luthier luthier, BindingResult result,
 			HttpServletRequest request, Errors errors) {

@@ -13,14 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.tone.exception.BusinessException;
 import com.tone.model.FeatureEntity;
+import com.tone.model.LuthierEntity;
 import com.tone.model.enumm.StatusEnum;
 import com.tone.model.payload.Feature;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -237,26 +236,135 @@ class LuthierControllerTest extends AbstractRestControllerTest{
         verify(luthierService, times(1)).save(ArgumentMatchers.any());
 
     }
-/*
-    @DisplayName(value="Find all luthiers.") 
+
+    @DisplayName(value="Find all luthiers.")
     @Test
     void findAllLuthiers() throws Exception {
-    	Optional<Set<LuthierEntity>> list = Optional.of(luthiers.stream().collect(Collectors.toSet()));
-    	
-    	when(luthierService.findAll()).thenReturn(list);    	
-    	
+        Optional<Set<LuthierEntity>> list = Optional.of(luthiers.stream().collect(Collectors.toSet()));
+
+        when(luthierService.findAll()).thenReturn(list);
+
         mockMvc.perform(get("/api/luthier")
-        		.accept(MediaType.APPLICATION_JSON)
-        		.contentType(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(2)))
-                ;        
+        ;
     }
 
+    @DisplayName(value="Find all luthiers active.")
+    @Test
+    void findAllLuthiersActive() throws Exception {
 
+        when(luthierService.findActive()).thenReturn(new HashSet<>(luthiers));
 
-    
+        mockMvc.perform(get("/api/luthier/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
+        ;
+    }
+
+    @DisplayName(value="Not found luthiers active.")
+    @Test
+    void notFoundLuthiersActive() throws Exception {
+
+        Set<LuthierEntity> list = new HashSet<>();
+        when(luthierService.findActive()).thenReturn(list);
+
+        mockMvc.perform(get("/api/luthier/active")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+        ;
+    }
+
+    @DisplayName(value="Find all luthiers inactive.")
+    @Test
+    void findAllLuthiersInactive() throws Exception {
+
+        when(luthierService.findInactive()).thenReturn(new HashSet<>(luthiers));
+
+        mockMvc.perform(get("/api/luthier/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(2)))
+        ;
+    }
+
+    @DisplayName(value="Not found luthiers inactive.")
+    @Test
+    void notFoundLuthiersInactive() throws Exception {
+
+        Set<LuthierEntity> list = new HashSet<>();
+        when(luthierService.findInactive()).thenReturn(list);
+
+        mockMvc.perform(get("/api/luthier/inactive")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+        ;
+    }
+
+    @DisplayName(value="Not found luthiers.")
+    @Test
+    void notFoundLuthiers() throws Exception {
+
+        Set<LuthierEntity> list = new HashSet<>();
+        when(luthierService.findAll()).thenReturn(Optional.ofNullable(list));
+
+        mockMvc.perform(get("/api/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").doesNotExist())
+        ;
+    }
+
+    @DisplayName(value="Find luthier by name.")
+    @Test
+    void findLuthierByName() throws Exception {
+
+        LuthierEntity luthierEntity = LuthierEntity.builder().id(1l).name("luthier").build();
+        List<LuthierEntity> list = new ArrayList<LuthierEntity>();
+        list.add(luthierEntity);
+
+        Optional<List<LuthierEntity>> luthiersEntities = Optional.of(list);
+
+        when(luthierService.findByName(Mockito.anyString())).thenReturn(luthiersEntities);
+
+        mockMvc.perform(get("/api/luthier/luthier")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.object").isArray())
+                .andExpect(jsonPath("$.object", hasSize(1)))
+        ;
+    }
+
+    @DisplayName(value="Not Found an luthier by name.")
+    @Test
+    void notFoundLuthierByName() throws Exception {
+
+        Optional<List<LuthierEntity>> luthiersEntities = Optional.empty();
+
+        when(luthierService.findByName(Mockito.anyString())).thenReturn(luthiersEntities);
+
+        mockMvc.perform(get("/api/luthier/joao")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isBadRequest())
+        ;
+    }
+/*
+
     @DisplayName(value="Delete luthier")
     @Test
     void deleteLuthier() throws Exception {

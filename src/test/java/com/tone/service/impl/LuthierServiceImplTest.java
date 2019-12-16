@@ -1,8 +1,7 @@
 package com.tone.service.impl;
 
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -56,6 +55,7 @@ class LuthierServiceImplTest {
 		// luthiers
 		LuthierEntity luthier1 = LuthierEntity.builder().name("Luthier 1").email("luthier1@tone.com").status(StatusEnum.ACTIVE).build();
 		LuthierEntity luthier2 = LuthierEntity.builder().name("Luthier 2").email("luthier2@tone.com").status(StatusEnum.INACTIVE).build();
+		LuthierEntity luthier99 = LuthierEntity.builder().name("Luthier 99").email("luthier99@tone.com").status(StatusEnum.ACTIVE).build();
 
 		// social networks
 		SocialNetworkEntity socialNetwork1 = SocialNetworkEntity.builder().name("Instagram").status(StatusEnum.ACTIVE).build();
@@ -76,6 +76,7 @@ class LuthierServiceImplTest {
 			// save luthiers
 			luthierService.save(luthier1);
 			luthierService.save(luthier2);
+			luthierService.save(luthier99);
 
 			// save features
 			feature3 = featureService.save(feature3);
@@ -375,24 +376,36 @@ class LuthierServiceImplTest {
 
 	}
 
-	/*
 	@DisplayName("Find all luthier")
 	@Test
 	void findAll() {
-		
 		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 
 		assertNotNull(luthiers);
-		assertEquals(2, luthiers.size());
+		assertEquals(3, luthiers.size());
 	}
 
 	@DisplayName("Find luthier by name")
 	@Test
 	void findByName() {
 		
-		LuthierEntity luthier = luthierService.findOptionalByName("Luthier 2");
-		assertNotNull(luthier);		
+		Optional<List<LuthierEntity>> luthier = luthierService.findByName("Luthier 2");
+		assertFalse(luthier.get().isEmpty());
 	}
 
-	*/
+	@DisplayName("Find luthier by status active")
+	@Test
+	void findByStatusActive() {
+
+		Set<LuthierEntity> luthier = luthierService.findActive();
+		assertEquals(2, luthier.size());
+	}
+
+	@DisplayName("Find luthier by status inactive")
+	@Test
+	void findByStatusInactive() {
+
+		Set<LuthierEntity> luthier = luthierService.findInactive();
+		assertEquals(1, luthier.size());
+	}
 }
