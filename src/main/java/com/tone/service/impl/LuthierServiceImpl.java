@@ -1,7 +1,16 @@
 package com.tone.service.impl;
 
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_LUTHIER_EXIST;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_LUTHIER_NOTFOUND;
+import static com.tone.utils.ConstantsMessages.MSG_ERROR_LUTHIER_SAVE;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
 import com.tone.exception.BusinessException;
-import com.tone.model.LuthierEntity;
 import com.tone.model.LuthierEntity;
 import com.tone.model.LuthierFeatureEntity;
 import com.tone.model.LuthierSocialNetworkEntity;
@@ -10,14 +19,8 @@ import com.tone.repository.LuthierFeatureRepository;
 import com.tone.repository.LuthierRepository;
 import com.tone.repository.LuthierSocialNetworkRepository;
 import com.tone.service.LuthierService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static com.tone.utils.ConstantsMessages.*;
 
 @Slf4j
 @Service
@@ -102,11 +105,18 @@ public class LuthierServiceImpl extends BaseServiceImpl<LuthierEntity,Long> impl
 		
 		if(luthier.isPresent()) {
 
-			if(luthier.get().getSocialNetworks() != null) {
-				for (LuthierSocialNetworkEntity social : luthier.get().getSocialNetworks()) {
-					this.luthierSocialNetworkRepository.delete(social);
-				}
+			if(luthier.get().getSocialNetworks() != null && !luthier.get().getSocialNetworks().isEmpty()){
+				Optional<List<LuthierSocialNetworkEntity>> list = luthierSocialNetworkRepository.findAllOptionalByLuthier(luthier.get());
+				list.ifPresent( listls -> listls.forEach(ls -> luthierSocialNetworkRepository.delete(ls)));
 			}
+
+			if(luthier.get().getFeatures() != null && !luthier.get().getFeatures().isEmpty()){
+				Optional<List<LuthierFeatureEntity>> list = luthierFeatureRepository.findAllOptionalByLuthier(luthier.get());
+				list.ifPresent( listlf -> listlf.forEach(lf -> luthierFeatureRepository.delete(lf)));
+			}
+			
+		}else {
+			throw new BusinessException(MSG_ERROR_LUTHIER_NOTFOUND);
 		}
 		
 		super.delete(entity);

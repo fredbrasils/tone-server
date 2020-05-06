@@ -1,7 +1,9 @@
 package com.tone.service.impl;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -9,15 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.tone.model.FeatureEntity;
-import com.tone.model.LuthierFeatureEntity;
-import com.tone.model.SocialNetworkEntity;
-import com.tone.model.enumm.FeatureTypeEnum;
-import com.tone.model.enumm.StatusEnum;
-import com.tone.service.FeatureService;
-import com.tone.service.LuthierFeatureService;
-import com.tone.service.SocialNetworkService;
-import com.tone.utils.ConstantsMessages;
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,10 +23,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.tone.exception.BusinessException;
+import com.tone.model.FeatureEntity;
 import com.tone.model.LuthierEntity;
+import com.tone.model.LuthierFeatureEntity;
+import com.tone.model.SocialNetworkEntity;
+import com.tone.model.enumm.FeatureTypeEnum;
+import com.tone.model.enumm.StatusEnum;
+import com.tone.service.FeatureService;
+import com.tone.service.LuthierFeatureService;
 import com.tone.service.LuthierService;
-
-import javax.transaction.Transactional;
+import com.tone.service.SocialNetworkService;
+import com.tone.utils.ConstantsMessages;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -48,7 +50,7 @@ class LuthierServiceImplTest {
 
 	@Autowired
 	LuthierFeatureService luthierFeatureService;
-
+	
 	@BeforeEach
 	void setUp() {
 
@@ -76,7 +78,7 @@ class LuthierServiceImplTest {
 			// save luthiers
 			luthierService.save(luthier1);
 			luthierService.save(luthier2);
-			luthierService.save(luthier99);
+			luthier99 = luthierService.save(luthier99);
 
 			// save features
 			feature3 = featureService.save(feature3);
@@ -90,6 +92,12 @@ class LuthierServiceImplTest {
 			feature33.setRoot(feature3);
 			featureService.save(feature33);
 
+			luthier99.addFeature(feature31, "50");
+			
+			for(LuthierFeatureEntity lf : luthier99.getFeatures()) {
+				luthierFeatureService.save(lf);
+			}
+			
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +115,7 @@ class LuthierServiceImplTest {
 				System.out.println(e.getMessage());
 			}
 		});
-
+		
 		// remove all luthiers
 		Set<LuthierEntity> luthiers = luthierService.findAll().orElse(null);
 		luthiers.stream().forEach(lut -> {
@@ -465,5 +473,36 @@ class LuthierServiceImplTest {
 		} catch (BusinessException e) {
 			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_LUTHIER_NOTFOUND);
 		}
+	}
+	
+	@DisplayName("Delete an luthier and dependencies")
+	@Test
+	void shouldDeleteLuthierAndDependeies() {
+
+		Optional<List<LuthierEntity>> luthier = luthierService.findByName("Luthier 99");
+
+		try {
+			luthierService.delete(luthier.get().get(0));
+		} catch (BusinessException e) {
+			fail();
+		}
+		
+		Optional<List<LuthierEntity>> luthierDeleted = luthierService.findByName("Luthier 99");
+		assertFalse(luthierDeleted.isPresent());
+		
+	}
+	
+	@DisplayName("Dont Delete an luthier that doesnt exist")
+	@Test
+	void shouldnotDeleteLuthierThatDoesntExist() {
+
+		LuthierEntity luthier = LuthierEntity.builder().id(99l).build();
+
+		try {
+			luthierService.delete(luthier);
+			fail();
+		} catch (BusinessException e) {
+			assertEquals(e.getMessage(), ConstantsMessages.MSG_ERROR_LUTHIER_NOTFOUND);
+		}			
 	}
 }
